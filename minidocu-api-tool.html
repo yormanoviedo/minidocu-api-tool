@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiniDocuAPITool by yormanoviedo</title>
+    <title>MiniDocuAPITool by yormanoviedo v1.0.2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Estilos personalizados para emular Swagger */
@@ -27,23 +27,47 @@
             overflow-x: auto;
             font-family: monospace;
             font-size: 0.875rem;
+            position: relative;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #abb2bf;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .copy-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
         }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
 
-    <!-- Header -->
     <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
         <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col gap-4">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between flex-wrap gap-2">
                 <div class="flex items-center gap-3">
                     <div class="bg-blue-600 text-white p-2 rounded-lg">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                     </div>
                     <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                        MiniDocuAPITool <span class="font-light text-sm">by yormanoviedo</span>
-                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-bold border border-blue-200 tracking-wide">v1.0.1</span>
+                        MiniDocuAPITool <span class="font-light text-sm hidden sm:inline">by yormanoviedo</span>
+                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-bold border border-blue-200 tracking-wide">v1.0.2</span>
                     </h1>
+                </div>
+                
+                <div class="relative w-full sm:w-64">
+                    <input type="text" id="searchInput" onkeyup="filterApis(this.value)" placeholder="Buscar API (nombre, ruta)..." class="w-full border border-gray-300 rounded-full pl-10 pr-4 py-1.5 text-sm focus:ring-blue-500 focus:border-blue-500">
+                    <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
             </div>
             
@@ -70,25 +94,21 @@
         </div>
     </header>
 
-    <!-- Notificaciones -->
     <div id="notification" class="hidden max-w-6xl mx-auto mt-4 px-4 z-50 fixed top-16 left-0 right-0">
-        <div id="notification-content" class="p-4 rounded-md shadow-sm"></div>
+        <div id="notification-content" class="p-4 rounded-md shadow-sm text-center"></div>
     </div>
 
-    <!-- Main Content -->
-    <main class="max-w-6xl mx-auto px-4 py-8 mt-4">
+    <main class="max-w-6xl mx-auto px-4 py-8 mt-2">
         <div id="api-list" class="space-y-4">
-            <!-- Las APIs se renderizarán aquí -->
-        </div>
+            </div>
         
         <div id="empty-state" class="text-center py-20 hidden">
             <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
-            <h2 class="text-xl font-semibold text-gray-600">No hay APIs documentadas</h2>
-            <p class="text-gray-500 mt-2">Agrega una nueva API o importa tu archivo TXT base de datos.</p>
+            <h2 class="text-xl font-semibold text-gray-600" id="empty-state-title">No hay APIs documentadas</h2>
+            <p class="text-gray-500 mt-2" id="empty-state-desc">Agrega una nueva API o importa tu archivo TXT base de datos.</p>
         </div>
     </main>
 
-    <!-- Modal Formulario API -->
     <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50 p-4 overflow-y-auto">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl my-8">
             <div class="flex justify-between items-center border-b p-4">
@@ -131,14 +151,18 @@
                         <textarea id="f_desc" required rows="2" class="w-full border border-gray-300 rounded p-2 text-sm" placeholder="Describe qué hace este iFlow..."></textarea>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Cuerpo de la Petición (Request JSON)</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Cuerpo Petición (Request)</label>
                             <textarea id="f_req" rows="6" class="w-full border border-gray-300 rounded p-2 font-mono text-sm bg-gray-50" placeholder='{&#10;  "campo": "valor"&#10;}'></textarea>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Cuerpo de la Respuesta (Response JSON)</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Respuesta (Success)</label>
                             <textarea id="f_res" rows="6" class="w-full border border-gray-300 rounded p-2 font-mono text-sm bg-gray-50" placeholder='{&#10;  "status": "success"&#10;}'></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Error Payload (400/500)</label>
+                            <textarea id="f_err" rows="6" class="w-full border border-gray-300 rounded p-2 font-mono text-sm bg-gray-50" placeholder='{&#10;  "error": "BAD_REQUEST"&#10;}'></textarea>
                         </div>
                     </div>
 
@@ -151,7 +175,6 @@
         </div>
     </div>
 
-    <!-- Modal Proyectos -->
     <div id="projectModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50 p-4 overflow-y-auto">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl my-8">
             <div class="flex justify-between items-center border-b p-4">
@@ -167,7 +190,6 @@
                     <button onclick="addProject()" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 font-medium text-sm">Añadir</button>
                 </div>
                 <div id="project-list-container" class="space-y-3 max-h-80 overflow-y-auto">
-                    <!-- Project list will render here -->
                 </div>
             </div>
             <div class="p-4 border-t bg-gray-50 flex justify-end">
@@ -176,7 +198,6 @@
         </div>
     </div>
 
-    <!-- Modal Exportar Word -->
     <div id="exportWordModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50 p-4 overflow-y-auto">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-sm my-8">
             <div class="flex justify-between items-center border-b p-4">
@@ -195,11 +216,12 @@
     </div>
 
     <script>
-        const CURRENT_DB_VERSION = "1.0.1";
+        const CURRENT_DB_VERSION = "1.0.2";
 
         // Estado inicial / Base de datos en memoria
         let projectsData = [];
         let apiData = [];
+        let currentSearchQuery = '';
         
         function loadState() {
             const saved = localStorage.getItem('cpi_hub_db');
@@ -214,21 +236,41 @@
                 }
             }
             
-            // Estado inicial por defecto si no hay localStorage
+            // Datos demo si está vacío
             projectsData = [
-                { id: 1, name: "Integración S/4HANA", description: "APIs core de integración con el sistema ERP" }
+                { id: 1, name: "VUELOS", description: "Integración con la tabla SFLIGHT de SAP para gestión de vuelos y reservas" }
             ];
 
             apiData = [
                 {
                     id: 1,
-                    project: "Integración S/4HANA",
-                    title: "Ejemplo: Creación de Pedido",
+                    project: "VUELOS",
+                    title: "Consultar vuelos disponibles (SFLIGHT)",
+                    method: "GET",
+                    path: "/http/v1/vuelos",
+                    description: "Consulta la tabla SFLIGHT de SAP y retorna la lista de vuelos disponibles filtrados por aerolínea, origen y destino. Utiliza el iFlow de lectura sobre la entidad SFLIGHT del sistema SAP back-end.",
+                    reqBody: "",
+                    resBody: "{\n  \"vuelos\": [\n    {\n      \"mandt\": \"100\",\n      \"carrid\": \"LH\",\n      \"connid\": \"0400\",\n      \"fldate\": \"2026-07-10\",\n      \"price\": \"750.00\",\n      \"currency\": \"EUR\",\n      \"planetype\": \"A380-800\",\n      \"seatsmax\": 475,\n      \"seatsocc\": 320,\n      \"paymentsum\": \"240000.00\"\n    },\n    {\n      \"mandt\": \"100\",\n      \"carrid\": \"AA\",\n      \"connid\": \"0017\",\n      \"fldate\": \"2026-07-12\",\n      \"price\": \"430.00\",\n      \"currency\": \"USD\",\n      \"planetype\": \"747-400\",\n      \"seatsmax\": 385,\n      \"seatsocc\": 210,\n      \"paymentsum\": \"90300.00\"\n    }\n  ]\n}"
+                },
+                {
+                    id: 2,
+                    project: "VUELOS",
+                    title: "Reservar asiento en vuelo (SFLIGHT)",
                     method: "POST",
-                    path: "/http/v1/pedidos",
-                    description: "Este iFlow recibe un payload JSON desde el portal web y crea un pedido estándar en SAP S/4HANA.",
-                    reqBody: "{\n  \"idTransaccion\": \"TRX-123\",\n  \"fecha\": \"2026-07-03\",\n  \"cliente\": {\n    \"nombre\": \"Empresa Ejemplo\"\n  }\n}",
-                    resBody: "{\n  \"status\": \"SUCCESS\",\n  \"documento_sap\": \"4500012345\",\n  \"mensaje\": \"Pedido creado exitosamente\"\n}"
+                    path: "/http/v1/vuelos/reserva",
+                    description: "Crea una reserva de asiento sobre un vuelo existente en la tabla SFLIGHT. El iFlow valida disponibilidad de asientos (SEATSOCC vs SEATSMAX), actualiza el registro en SAP y retorna el número de reserva generado.",
+                    reqBody: "{\n  \"carrid\": \"LH\",\n  \"connid\": \"0400\",\n  \"fldate\": \"2026-07-10\",\n  \"pasajero\": {\n    \"nombre\": \"Juan\",\n    \"apellido\": \"García\",\n    \"email\": \"juan.garcia@empresa.com\"\n  },\n  \"clase\": \"Y\"\n}",
+                    resBody: "{\n  \"status\": \"SUCCESS\",\n  \"reserva_id\": \"RSV-20260710-00042\",\n  \"carrid\": \"LH\",\n  \"connid\": \"0400\",\n  \"fldate\": \"2026-07-10\",\n  \"asiento\": \"24B\",\n  \"clase\": \"Y\",\n  \"precio\": \"750.00\",\n  \"moneda\": \"EUR\",\n  \"mensaje\": \"Reserva creada exitosamente\"\n}"
+                },
+                {
+                    id: 3,
+                    project: "VUELOS",
+                    title: "Cancelar reserva de vuelo (SFLIGHT)",
+                    method: "DELETE",
+                    path: "/http/v1/vuelos/reserva/{reserva_id}",
+                    description: "Cancela una reserva existente identificada por su ID. El iFlow actualiza el contador SEATSOCC de la tabla SFLIGHT en SAP, liberando el asiento, y registra la baja en la tabla SBOOK.",
+                    reqBody: "{\n  \"reserva_id\": \"RSV-20260710-00042\",\n  \"motivo\": \"Cambio de planes del pasajero\"\n}",
+                    resBody: "{\n  \"status\": \"SUCCESS\",\n  \"reserva_id\": \"RSV-20260710-00042\",\n  \"mensaje\": \"Reserva cancelada. El asiento ha sido liberado correctamente.\",\n  \"reembolso\": {\n    \"importe\": \"750.00\",\n    \"moneda\": \"EUR\",\n    \"plazo_dias\": 5\n  }\n}"
                 }
             ];
         }
@@ -242,19 +284,43 @@
             localStorage.setItem('cpi_hub_db', JSON.stringify(db));
         }
         
-        loadState(); // Cargar los datos nada más iniciar
+        loadState();
         
-        // Variable para rastrear si estamos editando una API (null si es nueva)
         let editingApiId = null;
 
-        // Función principal para dibujar la lista
+        // Función de filtro
+        function filterApis(query) {
+            currentSearchQuery = query.toLowerCase().trim();
+            renderApis();
+        }
+
+        // Función para copiar al portapapeles
+        function copyToClipboard(buttonElement, textToCopy) {
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalText = buttonElement.innerText;
+                buttonElement.innerText = "¡Copiado!";
+                buttonElement.style.backgroundColor = "#49cc90";
+                buttonElement.style.color = "white";
+                
+                setTimeout(() => {
+                    buttonElement.innerText = originalText;
+                    buttonElement.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+                    buttonElement.style.color = "#abb2bf";
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+            });
+        }
+
         function renderApis() {
             const listContainer = document.getElementById('api-list');
             const emptyState = document.getElementById('empty-state');
+            const emptyTitle = document.getElementById('empty-state-title');
+            const emptyDesc = document.getElementById('empty-state-desc');
             
             listContainer.innerHTML = '';
 
-            // Actualizar select de proyectos en formulario API
+            // Actualizar select de proyectos
             const projectSelect = document.getElementById('f_project');
             if (projectSelect) {
                 const currentVal = projectSelect.value;
@@ -263,21 +329,38 @@
                 projectSelect.value = currentVal;
             }
 
-            if (apiData.length === 0 && projectsData.length === 0) {
+            // Aplicar filtro si existe
+            let filteredApis = apiData;
+            if (currentSearchQuery) {
+                filteredApis = apiData.filter(api => 
+                    api.title.toLowerCase().includes(currentSearchQuery) || 
+                    api.path.toLowerCase().includes(currentSearchQuery) ||
+                    api.method.toLowerCase().includes(currentSearchQuery)
+                );
+            }
+
+            if (filteredApis.length === 0 && projectsData.length === 0) {
+                emptyTitle.textContent = "No hay APIs documentadas";
+                emptyDesc.textContent = "Agrega una nueva API o importa tu archivo TXT base de datos.";
+                emptyState.classList.remove('hidden');
+            } else if (filteredApis.length === 0 && currentSearchQuery !== '') {
+                emptyTitle.textContent = "Sin resultados";
+                emptyDesc.textContent = "No se encontraron APIs que coincidan con tu búsqueda.";
                 emptyState.classList.remove('hidden');
             } else {
                 emptyState.classList.add('hidden');
                 
-                // Agrupar APIs por proyecto
-                const apisByProject = apiData.reduce((acc, api) => {
+                // Agrupar APIs filtradas
+                const apisByProject = filteredApis.reduce((acc, api) => {
                     const proj = api.project || 'Sin Proyecto';
                     if (!acc[proj]) acc[proj] = [];
                     acc[proj].push(api);
                     return acc;
                 }, {});
 
-                // Función auxiliar para renderizar un bloque de proyecto
                 const renderProjectBlock = (projName, projDesc, apis = []) => {
+                    if (apis.length === 0 && currentSearchQuery !== '') return; // Ocultar proyectos vacíos si hay búsqueda
+                    
                     const projectSection = document.createElement('div');
                     projectSection.className = 'mb-8';
                     
@@ -299,15 +382,18 @@
                     
                     const apisContainer = projectSection.querySelector('.project-apis-container');
 
-                    apis.forEach((api, index) => {
-                        // Estilos dinámicos según el método
+                    apis.forEach((api) => {
                         const methodClass = `method-${api.method}`;
                         const badgeClass = `method-badge-${api.method}`;
 
                         const apiCard = document.createElement('div');
                         apiCard.className = `border rounded-lg shadow-sm bg-white overflow-hidden ${methodClass}`;
                         
-                        // Header de la tarjeta (Clicable)
+                        // Preparar payload safe for HTML attribute in JS
+                        const safeReq = api.reqBody ? api.reqBody.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n') : '';
+                        const safeRes = api.resBody ? api.resBody.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n') : '';
+                        const safeErr = api.errBody ? api.errBody.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n') : '';
+
                         apiCard.innerHTML = `
                             <div class="flex items-center justify-between p-3 cursor-pointer hover:bg-black hover:bg-opacity-5 transition" onclick="toggleDetails(${api.id})">
                                 <div class="flex items-center gap-3 w-full truncate mr-2">
@@ -318,7 +404,6 @@
                                 <svg id="icon-${api.id}" class="w-5 h-5 text-gray-500 transform transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </div>
                             
-                            <!-- Contenido Expandible -->
                             <div id="details-${api.id}" class="hidden border-t border-gray-200 bg-white p-4">
                                 <div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4">
                                     <div>
@@ -335,14 +420,18 @@
                                     </div>
                                 </div>
                                 
-                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+                                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
                                     <div class="overflow-hidden">
                                         <h5 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Request Payload</h5>
-                                        ${api.reqBody ? `<pre class="max-h-96"><code>${escapeHtml(api.reqBody)}</code></pre>` : '<p class="text-sm text-gray-400 italic">No requiere payload</p>'}
+                                        ${api.reqBody ? `<pre class="max-h-96"><code>${escapeHtml(api.reqBody)}</code><button class="copy-btn" onclick="copyToClipboard(this, '${safeReq}')">Copiar JSON</button></pre>` : '<p class="text-sm text-gray-400 italic">No requiere payload</p>'}
                                     </div>
                                     <div class="overflow-hidden">
                                         <h5 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Response Payload (Success)</h5>
-                                        ${api.resBody ? `<pre class="max-h-96"><code>${escapeHtml(api.resBody)}</code></pre>` : '<p class="text-sm text-gray-400 italic">Sin ejemplo de respuesta</p>'}
+                                        ${api.resBody ? `<pre class="max-h-96"><code>${escapeHtml(api.resBody)}</code><button class="copy-btn" onclick="copyToClipboard(this, '${safeRes}')">Copiar JSON</button></pre>` : '<p class="text-sm text-gray-400 italic">Sin ejemplo de respuesta</p>'}
+                                    </div>
+                                    <div class="overflow-hidden">
+                                        <h5 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Error Payload (400/500)</h5>
+                                        ${api.errBody ? `<pre class="max-h-96"><code>${escapeHtml(api.errBody)}</code><button class="copy-btn" onclick="copyToClipboard(this, '${safeErr}')">Copiar JSON</button></pre>` : '<p class="text-sm text-gray-400 italic">Sin ejemplo de error</p>'}
                                     </div>
                                 </div>
                             </div>
@@ -353,14 +442,12 @@
                     listContainer.appendChild(projectSection);
                 };
 
-                // Renderizar proyectos registrados (mantiene el orden)
                 projectsData.forEach(p => {
                     const apis = apisByProject[p.name] || [];
                     renderProjectBlock(p.name, p.description, apis);
                     delete apisByProject[p.name];
                 });
 
-                // Renderizar proyectos restantes o "Sin Proyecto"
                 for (const [project, apis] of Object.entries(apisByProject)) {
                     renderProjectBlock(project, '', apis);
                 }
@@ -377,7 +464,7 @@
 
         function closeProjectModal() {
             document.getElementById('projectModal').classList.add('hidden');
-            renderApis(); // Re-renderizar APIs para actualizar selects y títulos
+            renderApis(); 
         }
 
         function renderProjects() {
@@ -414,7 +501,6 @@
                 return;
             }
             
-            // Check if exists
             if (projectsData.some(p => p.name.toLowerCase() === name.toLowerCase())) {
                 showNotification('Ya existe un proyecto con ese nombre.', 'error');
                 return;
@@ -426,8 +512,7 @@
                 description: desc
             });
             
-            saveState(); // Persistir
-            
+            saveState(); 
             document.getElementById('p_name').value = '';
             document.getElementById('p_desc').value = '';
             
@@ -438,7 +523,6 @@
         function deleteProject(id) {
             const proj = projectsData.find(p => p.id === id);
             if(confirm(`¿Eliminar proyecto "${proj.name}"? Las APIs asociadas quedarán sin proyecto.`)) {
-                // Remove project name from APIs
                 apiData = apiData.map(api => {
                     if (api.project === proj.name) {
                         return { ...api, project: '' };
@@ -447,17 +531,15 @@
                 });
                 
                 projectsData = projectsData.filter(p => p.id !== id);
-                saveState(); // Persistir
+                saveState(); 
                 
                 renderProjects();
                 showNotification('Proyecto eliminado.', 'info');
             }
         }
-        // --- FIN GESTIÓN PROYECTOS ---
 
-        // Mostrar/Ocultar detalles
+        // --- ACCIONES PRINCIPALES API ---
         function toggleDetails(id) {
-            // Evitar que el clic en los botones de acción dispare el toggle
             if (event.target.closest('button')) return;
 
             const detailsDiv = document.getElementById(`details-${id}`);
@@ -471,43 +553,38 @@
             }
         }
 
-        // Abrir Modal para CREAR
         function openModal() {
             document.getElementById('apiForm').reset();
             document.getElementById('modalTitle').textContent = 'Agregar Nueva Interfaz CPI';
-            editingApiId = null; // Reseteamos el estado
+            editingApiId = null; 
             document.getElementById('modal').classList.remove('hidden');
         }
 
-        // Abrir Modal para EDITAR
         function editApi(id) {
             const apiToEdit = apiData.find(api => api.id === id);
             if (!apiToEdit) return;
 
-            editingApiId = id; // Marcamos que estamos editando
+            editingApiId = id; 
             document.getElementById('modalTitle').textContent = 'Editar Interfaz CPI';
 
-            // Rellenar el formulario con los datos existentes
             document.getElementById('f_title').value = apiToEdit.title;
             document.getElementById('f_project').value = apiToEdit.project || '';
             document.getElementById('f_method').value = apiToEdit.method;
             document.getElementById('f_path').value = apiToEdit.path;
             document.getElementById('f_desc').value = apiToEdit.description;
-            document.getElementById('f_req').value = apiToEdit.reqBody;
-            document.getElementById('f_res').value = apiToEdit.resBody;
+            document.getElementById('f_req').value = apiToEdit.reqBody || '';
+            document.getElementById('f_res').value = apiToEdit.resBody || '';
+            document.getElementById('f_err').value = apiToEdit.errBody || '';
 
             document.getElementById('modal').classList.remove('hidden');
-            
-            // Evitar que el evento de clic se propague al header y cierre el detalle
             if (event) event.stopPropagation();
         }
 
         function closeModal() {
             document.getElementById('modal').classList.add('hidden');
-            editingApiId = null; // Siempre reseteamos al cerrar
+            editingApiId = null; 
         }
 
-        // Guardar API (Crear o Actualizar)
         function saveApi(e) {
             e.preventDefault();
             
@@ -518,19 +595,17 @@
                 path: document.getElementById('f_path').value,
                 description: document.getElementById('f_desc').value,
                 reqBody: document.getElementById('f_req').value,
-                resBody: document.getElementById('f_res').value
+                resBody: document.getElementById('f_res').value,
+                errBody: document.getElementById('f_err').value
             };
 
             if (editingApiId !== null) {
-                // MODO EDICIÓN: Actualizar la API existente
                 const apiIndex = apiData.findIndex(api => api.id === editingApiId);
                 if (apiIndex !== -1) {
-                    // Mantener el ID original y actualizar el resto de campos
                     apiData[apiIndex] = { ...apiData[apiIndex], ...formData };
                     showNotification('API actualizada correctamente.', 'success');
                 }
             } else {
-                // MODO CREACIÓN: Añadir nueva API
                 const newApi = {
                     id: Date.now(),
                     ...formData
@@ -539,97 +614,34 @@
                 showNotification('API agregada correctamente.', 'success');
             }
 
-            saveState(); // Persistir
+            saveState(); 
             renderApis();
             closeModal();
         }
 
-        // Eliminar API
         function deleteApi(id) {
-            // Confirmación simple antes de eliminar
             if (confirm('¿Estás seguro de que deseas eliminar esta documentación de API?')) {
                 apiData = apiData.filter(api => api.id !== id);
-                saveState(); // Persistir
+                saveState(); 
                 renderApis();
                 showNotification('API eliminada.', 'info');
             }
-            // Evitar propagación del clic
             if (event) event.stopPropagation();
         }
 
-        // --- SISTEMA DE EXPORTACIÓN A WORD ---
+        // --- SISTEMAS DE EXPORTACIÓN (Word) ---
         function exportToWord(id) {
             const api = apiData.find(a => a.id === id);
             if (!api) return;
-
-            // Evitar que el clic en el botón cierre el panel de detalles
             if (event) event.stopPropagation();
 
-            // Construir el contenido HTML que MS Word puede leer
-            const htmlContent = `
-                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-                <head>
-                    <meta charset='utf-8'>
-                    <title>${api.title}</title>
-                    <style>
-                        body { font-family: 'Segoe UI', Arial, sans-serif; color: #333; }
-                        h1 { color: #0055a4; border-bottom: 2px solid #0055a4; padding-bottom: 5px; font-size: 22px; }
-                        h2 { color: #0073e6; margin-top: 20px; font-size: 16px; border-bottom: 1px solid #ccc; padding-bottom: 3px; }
-                        table { border-collapse: collapse; width: 100%; margin-bottom: 15px; }
-                        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; font-size: 14px;}
-                        th { background-color: #f2f2f2; font-weight: bold; width: 30%; }
-                        .endpoint-box { background-color: #f8f9fa; padding: 12px; border-left: 4px solid #0073e6; margin-bottom: 15px; }
-                        pre { background-color: #f5f5f5; padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Courier New', Courier, monospace; white-space: pre-wrap; font-size: 12px; color: #d63384;}
-                    </style>
-                </head>
-                <body>
-                    <h1>DOCUMENTO DE ESPECIFICACIÓN DE INTERFAZ (API)</h1>
-                    
-                    <table>
-                        <tr><th>Nombre de la Interfaz</th><td>${api.title}</td></tr>
-                        <tr><th>Proyecto</th><td>${api.project || 'Sin Proyecto'}</td></tr>
-                        <tr><th>Protocolo</th><td>REST / HTTP</td></tr>
-                        <tr><th>Fecha de Documentación</th><td>${new Date().toLocaleDateString()}</td></tr>
-                    </table>
-
-                    <h2>1. DESCRIPCIÓN GENERAL</h2>
-                    <p>${api.description}</p>
-
-                    <h2>2. ENDPOINT</h2>
-                    <div class="endpoint-box">
-                        <strong>Método HTTP:</strong> ${api.method}<br><br>
-                        <strong>Ruta (Path):</strong> ${api.path}
-                    </div>
-
-                    <h2>3. ESPECIFICACIÓN DE LA PETICIÓN (REQUEST)</h2>
-                    ${api.reqBody ? `<pre>${escapeHtmlForWord(api.reqBody)}</pre>` : '<p><i>Esta interfaz no requiere envío de payload en el cuerpo de la petición.</i></p>'}
-
-                    <h2>4. ESPECIFICACIÓN DE LA RESPUESTA (RESPONSE)</h2>
-                    ${api.resBody ? `<pre>${escapeHtmlForWord(api.resBody)}</pre>` : '<p><i>Sin ejemplo de payload de respuesta definido.</i></p>'}
-                </body>
-                </html>
-            `;
-
-            const blob = new Blob(['\ufeff', htmlContent], {
-                type: 'application/msword'
-            });
-            
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `Doc_API_${api.title.replace(/\s+/g, '_')}.doc`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            
+            const htmlContent = buildWordHtmlForSingleApi(api);
+            downloadWordFile(htmlContent, `Doc_API_${api.title.replace(/\s+/g, '_')}.doc`);
             showNotification('Documento Word generado exitosamente.', 'success');
         }
 
-        // --- SISTEMA DE EXPORTACIÓN DE PROYECTO A WORD ---
         function openExportWordModal() {
             const select = document.getElementById('ew_project');
-            // Obtener todos los proyectos de los que hay APIs
             const allProjects = [...new Set(apiData.map(a => a.project || 'Sin Proyecto'))];
             
             if (allProjects.length === 0) {
@@ -654,40 +666,118 @@
                 return;
             }
 
+            const htmlContent = buildWordHtmlForProject(projectName, projectApis);
+            const dateStr = new Date().toISOString().split('T')[0];
+            const safeName = projectName.replace(/[^a-zA-Z0-9]/g, '_');
+            
+            downloadWordFile(htmlContent, `Documentacion_${safeName}_${dateStr}.doc`);
+            showNotification('Documento Word del proyecto generado exitosamente.', 'success');
+            closeExportWordModal();
+        }
+        
+        function downloadWordFile(htmlContent, filename) {
+            const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function buildWordHtmlForSingleApi(api) {
+            return `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head>
+                    <meta charset='utf-8'>
+                    <title>${api.title}</title>
+                    <style>
+                        body { font-family: 'Segoe UI', Arial, sans-serif; color: #333; }
+                        h1 { color: #0055a4; border-bottom: 2px solid #0055a4; padding-bottom: 5px; font-size: 22px; }
+                        h2 { color: #0073e6; margin-top: 20px; font-size: 16px; border-bottom: 1px solid #ccc; padding-bottom: 3px; }
+                        table { border-collapse: collapse; width: 100%; margin-bottom: 15px; }
+                        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; font-size: 14px;}
+                        th { background-color: #f2f2f2; font-weight: bold; width: 30%; }
+                        .endpoint-box { background-color: #f8f9fa; padding: 12px; border-left: 4px solid #0073e6; margin-bottom: 15px; }
+                        pre { background-color: #f5f5f5; padding: 15px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Courier New', Courier, monospace; white-space: pre-wrap; font-size: 12px; color: #d63384;}
+                    </style>
+                </head>
+                <body>
+                    <h1>DOCUMENTO DE ESPECIFICACIÓN DE INTERFAZ (API)</h1>
+                    <table>
+                        <tr><th>Nombre de la Interfaz</th><td>${api.title}</td></tr>
+                        <tr><th>Proyecto</th><td>${api.project || 'Sin Proyecto'}</td></tr>
+                        <tr><th>Protocolo</th><td>REST / HTTP</td></tr>
+                        <tr><th>Fecha de Documentación</th><td>${new Date().toLocaleDateString()}</td></tr>
+                    </table>
+                    <h2>1. DESCRIPCIÓN GENERAL</h2>
+                    <p>${api.description}</p>
+                    <h2>2. ENDPOINT</h2>
+                    <div class="endpoint-box">
+                        <strong>Método HTTP:</strong> ${api.method}<br><br>
+                        <strong>Ruta (Path):</strong> ${api.path}
+                    </div>
+                    <h2>3. ESPECIFICACIÓN DE LA PETICIÓN (REQUEST)</h2>
+                    ${api.reqBody ? `<pre>${escapeHtmlForWord(api.reqBody)}</pre>` : '<p><i>Esta interfaz no requiere envío de payload en el cuerpo de la petición.</i></p>'}
+                    <h2>4. ESPECIFICACIÓN DE LA RESPUESTA (RESPONSE)</h2>
+                    ${api.resBody ? `<pre>${escapeHtmlForWord(api.resBody)}</pre>` : '<p><i>Sin ejemplo de payload de respuesta definido.</i></p>'}
+                    <h2>5. MANEJO DE ERRORES (EXCEPCIONES)</h2>
+                    <p>El sistema API puede devolver los siguientes códigos HTTP dependiendo del error.</p>
+                    <h3>5.1. Tabla de Códigos HTTP y Significado</h3>
+                    <table>
+                        <tr><th>Código HTTP</th><th>Descripción General</th><th>Acción a tomar por el consumidor</th></tr>
+                        <tr><td><strong>400</strong></td><td>Bad Request</td><td>Revisar el formato del JSON y los campos obligatorios.</td></tr>
+                        <tr><td><strong>401</strong></td><td>Unauthorized</td><td>Renovar el token de acceso o revisar credenciales.</td></tr>
+                        <tr><td><strong>403</strong></td><td>Forbidden</td><td>El usuario no tiene roles asignados en SAP BTP.</td></tr>
+                        <tr><td><strong>500</strong></td><td>Internal Server Error</td><td>Reintentar más tarde. Error de red o en SAP backend.</td></tr>
+                    </table>
+                    <h3>5.2. Ejemplo de Respuesta de Error (HTTP 400/500)</h3>
+                    ${api.errBody ? `<pre>${escapeHtmlForWord(api.errBody)}</pre>` : '<p><i>Sin ejemplo de payload de error definido.</i></p>'}
+                </body>
+                </html>
+            `;
+        }
+
+        function buildWordHtmlForProject(projectName, apis) {
             let bodyContent = `<h1>Documentación de Integración: ${escapeHtml(projectName)}</h1><p>Fecha de exportación: ${new Date().toLocaleDateString()}</p>`;
-
-            projectApis.forEach((api, index) => {
-                // Page break before every API except the first one to keep it clean
+            apis.forEach((api, index) => {
                 const pageBreak = index > 0 ? '<br clear="all" style="page-break-before:always" />' : '';
-
                 bodyContent += `
                     ${pageBreak}
                     <h2>ESPECIFICACIÓN DE INTERFAZ: ${api.title}</h2>
-                    
                     <table>
                         <tr><th>Nombre de la Interfaz</th><td>${api.title}</td></tr>
-                        <tr><th>Proyecto</th><td>${projectName}</td></tr>
                         <tr><th>Protocolo</th><td>REST / HTTP</td></tr>
                     </table>
-
                     <h3>1. DESCRIPCIÓN GENERAL</h3>
                     <p>${api.description}</p>
-
                     <h3>2. ENDPOINT</h3>
                     <div class="endpoint-box">
                         <strong>Método HTTP:</strong> ${api.method}<br><br>
                         <strong>Ruta (Path):</strong> ${api.path}
                     </div>
-
                     <h3>3. ESPECIFICACIÓN DE LA PETICIÓN (REQUEST)</h3>
                     ${api.reqBody ? `<pre>${escapeHtmlForWord(api.reqBody)}</pre>` : '<p><i>Esta interfaz no requiere envío de payload en el cuerpo de la petición.</i></p>'}
-
                     <h3>4. ESPECIFICACIÓN DE LA RESPUESTA (RESPONSE)</h3>
                     ${api.resBody ? `<pre>${escapeHtmlForWord(api.resBody)}</pre>` : '<p><i>Sin ejemplo de payload de respuesta definido.</i></p>'}
+                    <h3>5. MANEJO DE ERRORES (EXCEPCIONES)</h3>
+                    <p>El sistema API puede devolver los siguientes códigos HTTP dependiendo del error.</p>
+                    <h4>5.1. Tabla de Códigos HTTP y Significado</h4>
+                    <table>
+                        <tr><th>Código HTTP</th><th>Descripción General</th><th>Acción a tomar por el consumidor</th></tr>
+                        <tr><td><strong>400</strong></td><td>Bad Request</td><td>Revisar el formato del JSON y los campos obligatorios.</td></tr>
+                        <tr><td><strong>401</strong></td><td>Unauthorized</td><td>Renovar el token de acceso o revisar credenciales.</td></tr>
+                        <tr><td><strong>403</strong></td><td>Forbidden</td><td>El usuario no tiene roles asignados en SAP BTP.</td></tr>
+                        <tr><td><strong>500</strong></td><td>Internal Server Error</td><td>Reintentar más tarde. Error de red o en SAP backend.</td></tr>
+                    </table>
+                    <h4>5.2. Ejemplo de Respuesta de Error (HTTP 400/500)</h4>
+                    ${api.errBody ? `<pre>${escapeHtmlForWord(api.errBody)}</pre>` : '<p><i>Sin ejemplo de payload de error definido.</i></p>'}
                 `;
             });
 
-            const htmlContent = `
+            return `
                 <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
                 <head>
                     <meta charset='utf-8'>
@@ -709,66 +799,26 @@
                 </body>
                 </html>
             `;
-
-            const blob = new Blob(['\ufeff', htmlContent], {
-                type: 'application/msword'
-            });
-            
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            const dateStr = new Date().toISOString().split('T')[0];
-            const safeName = projectName.replace(/[^a-zA-Z0-9]/g, '_');
-            link.download = `Documentacion_${safeName}_${dateStr}.doc`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            
-            showNotification('Documento Word del proyecto generado exitosamente.', 'success');
-            closeExportWordModal();
-        }
-
-        function escapeHtmlForWord(text) {
-            if (!text) return '';
-            return text.replace(/&/g, '&amp;')
-                       .replace(/</g, '&lt;')
-                       .replace(/>/g, '&gt;')
-                       .replace(/\n/g, '<br>');
         }
 
         // --- SISTEMA DE BASE DE DATOS TXT (Import/Export) ---
-        
         function exportDB() {
             if (apiData.length === 0 && projectsData.length === 0) {
                 showNotification('No hay datos para exportar.', 'error');
                 return;
             }
             
-            const dbExport = {
-                version: CURRENT_DB_VERSION,
-                projects: projectsData,
-                apis: apiData
-            };
-            
+            const dbExport = { version: CURRENT_DB_VERSION, projects: projectsData, apis: apiData };
             const dataStr = JSON.stringify(dbExport, null, 2);
             const blob = new Blob([dataStr], { type: "text/plain" });
             const url = URL.createObjectURL(blob);
             
             const a = document.createElement("a");
             a.href = url;
-            
             const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            const fecha = `${year}-${month}-${day}`;
-            const hora = `${hours}-${minutes}-${seconds}`;
+            const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
             
-            a.download = `minidocu-api-tool-backup-${fecha}-${hora}.txt`;
+            a.download = `minidocu-api-tool-backup-${timestamp}.txt`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -787,18 +837,11 @@
                     const importedData = JSON.parse(e.target.result);
                     
                     if (Array.isArray(importedData)) {
-                        // Formato antiguo v1.0: Era un arreglo directo de APIs
                         apiData = importedData;
-                        // Extraer proyectos existentes
                         const uniqueProjectNames = [...new Set(apiData.map(api => api.project).filter(Boolean))];
-                        projectsData = uniqueProjectNames.map((name, idx) => ({
-                            id: Date.now() + idx,
-                            name: name,
-                            description: ""
-                        }));
-                        showNotification('Base de datos antigua (v1.0) cargada y migrada correctamente.', 'success');
-                    } else if (importedData.version && importedData.apis) {
-                        // Formato nuevo v1.0.1+
+                        projectsData = uniqueProjectNames.map((name, idx) => ({ id: Date.now() + idx, name: name, description: "" }));
+                        showNotification('BD antigua (v1.0) cargada y migrada.', 'success');
+                    } else if (importedData.apis) {
                         apiData = importedData.apis || [];
                         projectsData = importedData.projects || [];
                         showNotification('Base de datos cargada correctamente.', 'success');
@@ -806,10 +849,10 @@
                         throw new Error("Formato inválido");
                     }
                     
-                    saveState(); // Persistir los datos recién importados
+                    saveState(); 
                     renderApis();
                 } catch (err) {
-                    showNotification('Error al leer el archivo. Asegúrate de que sea un archivo exportado previamente.', 'error');
+                    showNotification('Error al leer el archivo.', 'error');
                     console.error(err);
                 }
             };
@@ -817,15 +860,16 @@
             event.target.value = '';
         }
 
-        // Utilidades
+        // Utilidades Varias
+        function escapeHtmlForWord(text) {
+            if (!text) return '';
+            return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+        }
+
         function escapeHtml(unsafe) {
             if (!unsafe) return '';
             return unsafe
-                 .replace(/&/g, "&amp;")
-                 .replace(/</g, "&lt;")
-                 .replace(/>/g, "&gt;")
-                 .replace(/"/g, "&quot;")
-                 .replace(/'/g, "&#039;");
+                 .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
         function showNotification(message, type) {
@@ -844,13 +888,10 @@
             }
 
             if (notif.timeoutId) clearTimeout(notif.timeoutId);
-
-            notif.timeoutId = setTimeout(() => {
-                notif.classList.add('hidden');
-            }, 4000);
+            notif.timeoutId = setTimeout(() => { notif.classList.add('hidden'); }, 3000);
         }
 
-        // Inicializar
+        // Inicializar la vista
         renderApis();
     </script>
 </body>
