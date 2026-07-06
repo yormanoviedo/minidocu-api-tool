@@ -61,7 +61,7 @@
                     </div>
                     <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
                         MiniDocuAPITool <span class="font-light text-sm hidden sm:inline">by yormanoviedo</span>
-                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-bold border border-blue-200 tracking-wide">v1.0.2</span>
+                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-bold border border-blue-200 tracking-wide">v1.0.3</span>
                     </h1>
                 </div>
                 
@@ -184,12 +184,18 @@
                 </button>
             </div>
             <div class="p-6">
-                <div class="mb-6 flex gap-2 items-start">
-                    <input type="text" id="p_name" placeholder="Nombre del proyecto" class="flex-1 border border-gray-300 rounded p-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    <input type="text" id="p_desc" placeholder="Descripción breve" class="flex-1 border border-gray-300 rounded p-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    <button onclick="addProject()" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 font-medium text-sm">Añadir</button>
+                <input type="hidden" id="p_editing_id" value="">
+                <div class="mb-2">
+                    <p id="p_form_label" class="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-2">Nuevo Proyecto</p>
+                    <div class="flex gap-2 items-start">
+                        <input type="text" id="p_name" placeholder="Nombre del proyecto" class="flex-1 border border-gray-300 rounded p-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <input type="text" id="p_desc" placeholder="Descripción breve" class="flex-1 border border-gray-300 rounded p-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <button id="p_save_btn" onclick="saveProject()" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 font-medium text-sm whitespace-nowrap">Añadir</button>
+                        <button id="p_cancel_btn" onclick="cancelEditProject()" class="hidden bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 font-medium text-sm whitespace-nowrap">Cancelar</button>
+                    </div>
                 </div>
-                <div id="project-list-container" class="space-y-3 max-h-80 overflow-y-auto">
+                <hr class="my-4 border-gray-200">
+                <div id="project-list-container" class="space-y-3 max-h-72 overflow-y-auto">
                 </div>
             </div>
             <div class="p-4 border-t bg-gray-50 flex justify-end">
@@ -216,12 +222,13 @@
     </div>
 
     <script>
-        const CURRENT_DB_VERSION = "1.0.2";
+        const CURRENT_DB_VERSION = "1.0.3";
 
         // Estado inicial / Base de datos en memoria
         let projectsData = [];
         let apiData = [];
         let currentSearchQuery = '';
+        const collapsedProjects = new Set(); // Proyectos colapsados
         
         function loadState() {
             const saved = localStorage.getItem('cpi_hub_db');
@@ -364,18 +371,28 @@
                     const projectSection = document.createElement('div');
                     projectSection.className = 'mb-8';
                     
+                const safeKey = encodeURIComponent(projName);
+                    const isCollapsed = collapsedProjects.has(projName);
+                    
                     projectSection.innerHTML = `
-                        <div class="mb-4 border-b border-gray-300 pb-2 flex justify-between items-end">
-                            <div>
-                                <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
-                                    ${escapeHtml(projName)}
+                        <div class="mb-4 border-b border-gray-300 pb-2">
+                            <div class="flex justify-between items-center cursor-pointer select-none group py-1"
+                                 onclick="toggleProject('${escapeHtml(projName).replace(/'/g, "\\'")}')"
+                                 title="Clic para colapsar/expandir">
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+                                    <h2 class="text-xl font-bold text-gray-800">${escapeHtml(projName)}</h2>
                                     <span class="text-sm font-normal text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full">${apis.length} API(s)</span>
-                                </h2>
-                                ${projDesc ? `<p class="text-gray-500 text-sm mt-1 ml-7">${escapeHtml(projDesc)}</p>` : ''}
+                                </div>
+                                <svg id="proj-icon-${safeKey}" 
+                                     class="w-5 h-5 text-gray-400 transform transition-transform duration-200 ${isCollapsed ? '' : 'rotate-180'}" 
+                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
                             </div>
+                            ${projDesc ? `<p class="text-gray-500 text-sm mt-0.5 ml-7">${escapeHtml(projDesc)}</p>` : ''}
                         </div>
-                        <div class="space-y-4 project-apis-container">
+                        <div id="proj-body-${safeKey}" class="space-y-4 project-apis-container ${isCollapsed ? 'hidden' : ''}">
                             ${apis.length === 0 ? '<p class="text-sm text-gray-400 italic ml-7">No hay APIs asignadas a este proyecto.</p>' : ''}
                         </div>
                     `;
@@ -454,6 +471,22 @@
             }
         }
 
+        function toggleProject(projName) {
+            const safeKey = encodeURIComponent(projName);
+            const body = document.getElementById(`proj-body-${safeKey}`);
+            const icon = document.getElementById(`proj-icon-${safeKey}`);
+            if (!body) return;
+            if (collapsedProjects.has(projName)) {
+                collapsedProjects.delete(projName);
+                body.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            } else {
+                collapsedProjects.add(projName);
+                body.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+            }
+        }
+
         // --- GESTIÓN DE PROYECTOS ---
         function openProjectModal() {
             document.getElementById('p_name').value = '';
@@ -477,19 +510,76 @@
             }
 
             projectsData.forEach(p => {
+                const apiCount = apiData.filter(a => a.project === p.name).length;
                 const pEl = document.createElement('div');
-                pEl.className = "flex justify-between items-center p-3 border rounded hover:bg-gray-50 transition";
+                pEl.className = "flex justify-between items-center p-3 border rounded hover:bg-gray-50 transition gap-2";
                 pEl.innerHTML = `
-                    <div>
-                        <h4 class="font-bold text-gray-800 text-sm">${escapeHtml(p.name)}</h4>
-                        <p class="text-xs text-gray-500">${escapeHtml(p.description)}</p>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-gray-800 text-sm">${escapeHtml(p.name)}
+                            <span class="ml-1 text-xs font-normal text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full">${apiCount} API(s)</span>
+                        </h4>
+                        <p class="text-xs text-gray-500 truncate">${escapeHtml(p.description) || '<span class="italic">Sin descripción</span>'}</p>
                     </div>
-                    <button onclick="deleteProject(${p.id})" class="text-red-500 hover:text-red-700 p-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                    </button>
+                    <div class="flex gap-1 flex-shrink-0">
+                        <button onclick="editProject(${p.id})" class="text-blue-500 hover:text-blue-700 p-2" title="Editar proyecto">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                        </button>
+                        <button onclick="deleteProject(${p.id})" class="text-red-500 hover:text-red-700 p-2" title="Eliminar proyecto">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
                 `;
                 container.appendChild(pEl);
             });
+        }
+
+        function editProject(id) {
+            const p = projectsData.find(p => p.id === id);
+            if (!p) return;
+            document.getElementById('p_editing_id').value = id;
+            document.getElementById('p_name').value = p.name;
+            document.getElementById('p_desc').value = p.description || '';
+            document.getElementById('p_form_label').textContent = 'Editando Proyecto';
+            document.getElementById('p_form_label').className = 'text-xs font-semibold text-amber-600 uppercase tracking-wide mb-2';
+            document.getElementById('p_save_btn').textContent = 'Guardar cambios';
+            document.getElementById('p_save_btn').className = 'bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600 font-medium text-sm whitespace-nowrap';
+            document.getElementById('p_cancel_btn').classList.remove('hidden');
+            document.getElementById('p_name').focus();
+        }
+
+        function cancelEditProject() {
+            document.getElementById('p_editing_id').value = '';
+            document.getElementById('p_name').value = '';
+            document.getElementById('p_desc').value = '';
+            document.getElementById('p_form_label').textContent = 'Nuevo Proyecto';
+            document.getElementById('p_form_label').className = 'text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-2';
+            document.getElementById('p_save_btn').textContent = 'Añadir';
+            document.getElementById('p_save_btn').className = 'bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 font-medium text-sm whitespace-nowrap';
+            document.getElementById('p_cancel_btn').classList.add('hidden');
+        }
+
+        function saveProject() {
+            const editingId = document.getElementById('p_editing_id').value;
+            if (editingId) {
+                // MODO EDICIÓN
+                const name = document.getElementById('p_name').value.trim();
+                const desc = document.getElementById('p_desc').value.trim();
+                if (!name) { showNotification('El nombre del proyecto es obligatorio.', 'error'); return; }
+                const id = parseInt(editingId);
+                const existing = projectsData.find(p => p.name.toLowerCase() === name.toLowerCase() && p.id !== id);
+                if (existing) { showNotification('Ya existe un proyecto con ese nombre.', 'error'); return; }
+                const oldName = projectsData.find(p => p.id === id).name;
+                // Actualizar nombre en APIs asociadas
+                apiData = apiData.map(api => api.project === oldName ? { ...api, project: name } : api);
+                projectsData = projectsData.map(p => p.id === id ? { ...p, name, description: desc } : p);
+                saveState();
+                cancelEditProject();
+                renderProjects();
+                showNotification('Proyecto actualizado correctamente.', 'success');
+            } else {
+                // MODO CREACIÓN
+                addProject();
+            }
         }
 
         function addProject() {
@@ -505,6 +595,7 @@
                 showNotification('Ya existe un proyecto con ese nombre.', 'error');
                 return;
             }
+            cancelEditProject(); // reset form state
 
             projectsData.push({
                 id: Date.now(),
