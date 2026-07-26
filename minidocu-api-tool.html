@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiniDocuAPITool by yormanoviedo v1.0.2</title>
+    <title>MiniDocuAPITool by yormanoviedo v1.0.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Estilos personalizados para emular Swagger */
@@ -48,6 +48,18 @@
             background-color: rgba(255, 255, 255, 0.2);
             color: white;
         }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans min-h-screen">
@@ -66,27 +78,28 @@
                 </div>
                 
                 <div class="relative w-full sm:w-64">
-                    <input type="text" id="searchInput" onkeyup="filterApis(this.value)" placeholder="Buscar API (nombre, ruta)..." class="w-full border border-gray-300 rounded-full pl-10 pr-4 py-1.5 text-sm focus:ring-blue-500 focus:border-blue-500">
+                    <label for="searchInput" class="sr-only">Buscar API</label>
+                    <input type="text" id="searchInput" placeholder="Buscar API (nombre, ruta)..." class="w-full border border-gray-300 rounded-full pl-10 pr-4 py-1.5 text-sm focus:ring-blue-500 focus:border-blue-500">
                     <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
             </div>
             
             <div class="flex flex-wrap items-center justify-start gap-2 pt-2">
-                <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow transition text-sm font-medium">
+                <button id="btnAddApi" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow transition text-sm font-medium">
                     + Agregar API
                 </button>
-                <button onclick="openProjectModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow transition text-sm font-medium">
+                <button id="btnManageProjects" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded shadow transition text-sm font-medium">
                     Gestionar Proyectos
                 </button>
                 <div class="w-px h-6 bg-gray-300 mx-2 hidden sm:block"></div>
                 <label class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded shadow cursor-pointer transition text-sm font-medium">
-                    <input type="file" id="importFile" class="hidden" accept=".txt,.json" onchange="importDB(event)">
+                    <input type="file" id="importFile" class="hidden" accept=".txt,.json">
                     Importar DB
                 </label>
-                <button onclick="exportDB()" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded shadow transition text-sm font-medium">
+                <button id="btnExportDb" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded shadow transition text-sm font-medium">
                     Exportar DB
                 </button>
-                <button onclick="openExportWordModal()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow transition text-sm font-medium flex items-center gap-1" title="Exportar un proyecto a Word">
+                <button id="btnExportWord" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow transition text-sm font-medium flex items-center gap-1" title="Exportar un proyecto a Word">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1.8 14.8L10 12.6l-2.2 4.2H6l3.3-5.6L6.3 6h2l1.7 3.8 1.7-3.8h2l-3 5.2 3.3 5.6h-1.8z"/></svg>
                     Word (Proyecto)
                 </button>
@@ -109,16 +122,16 @@
         </div>
     </main>
 
-    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50 p-4 overflow-y-auto">
+    <div id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50 p-4 overflow-y-auto">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl my-8">
             <div class="flex justify-between items-center border-b p-4">
                 <h3 id="modalTitle" class="text-lg font-bold text-gray-800">Agregar Nueva Interfaz CPI</h3>
-                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-800">
+                <button id="btnCloseModal" class="text-gray-500 hover:text-gray-800" aria-label="Cerrar modal">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             <div class="p-6">
-                <form id="apiForm" onsubmit="saveApi(event)" class="space-y-4">
+                <form id="apiForm" class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Proyecto</label>
@@ -167,7 +180,7 @@
                     </div>
 
                     <div class="flex justify-end gap-3 pt-4 border-t">
-                        <button type="button" onclick="closeModal()" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">Cancelar</button>
+                        <button type="button" id="btnCancelApi" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50">Cancelar</button>
                         <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium">Guardar API</button>
                     </div>
                 </form>
@@ -175,11 +188,11 @@
         </div>
     </div>
 
-    <div id="projectModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50 p-4 overflow-y-auto">
+    <div id="projectModal" role="dialog" aria-modal="true" aria-labelledby="projectModalTitle" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50 p-4 overflow-y-auto">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl my-8">
             <div class="flex justify-between items-center border-b p-4">
-                <h3 class="text-lg font-bold text-gray-800">Gestionar Proyectos</h3>
-                <button onclick="closeProjectModal()" class="text-gray-500 hover:text-gray-800">
+                <h3 id="projectModalTitle" class="text-lg font-bold text-gray-800">Gestionar Proyectos</h3>
+                <button id="btnCloseProjectModal" class="text-gray-500 hover:text-gray-800" aria-label="Cerrar modal">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -190,8 +203,8 @@
                     <div class="flex gap-2 items-start">
                         <input type="text" id="p_name" placeholder="Nombre del proyecto" class="flex-1 border border-gray-300 rounded p-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
                         <input type="text" id="p_desc" placeholder="Descripción breve" class="flex-1 border border-gray-300 rounded p-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
-                        <button id="p_save_btn" onclick="saveProject()" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 font-medium text-sm whitespace-nowrap">Añadir</button>
-                        <button id="p_cancel_btn" onclick="cancelEditProject()" class="hidden bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 font-medium text-sm whitespace-nowrap">Cancelar</button>
+                        <button id="p_save_btn" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 font-medium text-sm whitespace-nowrap">Añadir</button>
+                        <button id="p_cancel_btn" class="hidden bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 font-medium text-sm whitespace-nowrap">Cancelar</button>
                     </div>
                 </div>
                 <hr class="my-4 border-gray-200">
@@ -199,44 +212,121 @@
                 </div>
             </div>
             <div class="p-4 border-t bg-gray-50 flex justify-end">
-                <button onclick="closeProjectModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-100 font-medium">Cerrar</button>
+                <button id="btnCloseProjectModalBottom" class="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-100 font-medium">Cerrar</button>
             </div>
         </div>
     </div>
 
-    <div id="exportWordModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50 p-4 overflow-y-auto">
+    <div id="exportWordModal" role="dialog" aria-modal="true" aria-labelledby="exportWordModalTitle" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50 p-4 overflow-y-auto">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-sm my-8">
             <div class="flex justify-between items-center border-b p-4">
-                <h3 class="text-lg font-bold text-gray-800">Exportar a Word</h3>
-                <button onclick="closeExportWordModal()" class="text-gray-500 hover:text-gray-800">
+                <h3 id="exportWordModalTitle" class="text-lg font-bold text-gray-800">Exportar a Word</h3>
+                <button id="btnCloseExportWordModal" class="text-gray-500 hover:text-gray-800" aria-label="Cerrar modal">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             <div class="p-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Selecciona el proyecto a exportar:</label>
+                <label for="ew_project" class="block text-sm font-medium text-gray-700 mb-2">Selecciona el proyecto a exportar:</label>
                 <select id="ew_project" class="w-full border border-gray-300 rounded p-2 bg-white focus:ring-green-500 focus:border-green-500 mb-4">
                 </select>
-                <button onclick="exportSelectedProjectToWord()" class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-medium">Generar Documento Word</button>
+                <button id="btnExportSelectedProject" class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 font-medium">Generar Documento Word</button>
             </div>
         </div>
     </div>
 
     <script>
+    (function() {
+        'use strict';
+
         const CURRENT_DB_VERSION = "1.0.3";
 
-        // Estado inicial / Base de datos en memoria
-        let projectsData = [];
-        let apiData = [];
-        let currentSearchQuery = '';
-        const collapsedProjects = new Set(); // Proyectos colapsados
-        
+        const App = {
+            state: {
+                projects: [],
+                apis: [],
+                searchQuery: '',
+                editingApiId: null,
+                collapsedProjects: new Set()
+            },
+
+            render: {
+                apis() {},
+
+                projects() {}
+            },
+
+            actions: {
+                save() {},
+                delete() {},
+                export() {},
+                import() {}
+            },
+
+            utils: {
+                escapeHtml(str) {},
+                escapeHtmlForWord(text) {},
+                debounce(fn, delay) {},
+                showNotification(message, type) {}
+            }
+        };
+
+        let searchTimeout;
+
+        function escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            return unsafe
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+
+        function escapeHtmlForWord(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;')
+                .replace(/\n/g, '<br>');
+        }
+
+        function debounce(fn, delay) {
+            let timeoutId;
+            return function(...args) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => fn.apply(this, args), delay);
+            };
+        }
+
+        function showNotification(message, type) {
+            const notif = document.getElementById('notification');
+            const content = document.getElementById('notification-content');
+            
+            notif.classList.remove('hidden');
+            content.textContent = message;
+            
+            if (type === 'success') {
+                content.className = 'p-4 rounded-md shadow-sm bg-green-100 text-green-800 border border-green-200';
+            } else if (type === 'error') {
+                content.className = 'p-4 rounded-md shadow-sm bg-red-100 text-red-800 border border-red-200';
+            } else {
+                content.className = 'p-4 rounded-md shadow-sm bg-blue-100 text-blue-800 border border-blue-200';
+            }
+
+            if (notif.timeoutId) clearTimeout(notif.timeoutId);
+            notif.timeoutId = setTimeout(() => { notif.classList.add('hidden'); }, 3000);
+        }
+
         function loadState() {
             const saved = localStorage.getItem('cpi_hub_db');
             if (saved) {
                 try {
                     const data = JSON.parse(saved);
-                    projectsData = data.projects || [];
-                    apiData = data.apis || [];
+                    App.state.projects = data.projects || [];
+                    App.state.apis = data.apis || [];
                     return;
                 } catch(e) {
                     console.error("Error cargando DB local", e);
@@ -244,11 +334,11 @@
             }
             
             // Datos demo si está vacío
-            projectsData = [
+            App.state.projects = [
                 { id: 1, name: "VUELOS", description: "Integración con la tabla SFLIGHT de SAP para gestión de vuelos y reservas" }
             ];
 
-            apiData = [
+            App.state.apis = [
                 {
                     id: 1,
                     project: "VUELOS",
@@ -285,38 +375,15 @@
         function saveState() {
             const db = {
                 version: CURRENT_DB_VERSION,
-                projects: projectsData,
-                apis: apiData
+                projects: App.state.projects,
+                apis: App.state.apis
             };
             localStorage.setItem('cpi_hub_db', JSON.stringify(db));
         }
-        
-        loadState();
-        
-        let editingApiId = null;
 
-        // Función de filtro
         function filterApis(query) {
-            currentSearchQuery = query.toLowerCase().trim();
+            App.state.searchQuery = query.toLowerCase().trim();
             renderApis();
-        }
-
-        // Función para copiar al portapapeles
-        function copyToClipboard(buttonElement, textToCopy) {
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                const originalText = buttonElement.innerText;
-                buttonElement.innerText = "¡Copiado!";
-                buttonElement.style.backgroundColor = "#49cc90";
-                buttonElement.style.color = "white";
-                
-                setTimeout(() => {
-                    buttonElement.innerText = originalText;
-                    buttonElement.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
-                    buttonElement.style.color = "#abb2bf";
-                }, 2000);
-            }).catch(err => {
-                console.error('Error al copiar: ', err);
-            });
         }
 
         function renderApis() {
@@ -327,37 +394,34 @@
             
             listContainer.innerHTML = '';
 
-            // Actualizar select de proyectos
             const projectSelect = document.getElementById('f_project');
             if (projectSelect) {
                 const currentVal = projectSelect.value;
                 projectSelect.innerHTML = '<option value="">Sin Proyecto</option>' + 
-                    projectsData.map(p => `<option value="${escapeHtml(p.name)}">${escapeHtml(p.name)}</option>`).join('');
+                    App.state.projects.map(p => `<option value="${escapeHtml(p.name)}">${escapeHtml(p.name)}</option>`).join('');
                 projectSelect.value = currentVal;
             }
 
-            // Aplicar filtro si existe
-            let filteredApis = apiData;
-            if (currentSearchQuery) {
-                filteredApis = apiData.filter(api => 
-                    api.title.toLowerCase().includes(currentSearchQuery) || 
-                    api.path.toLowerCase().includes(currentSearchQuery) ||
-                    api.method.toLowerCase().includes(currentSearchQuery)
+            let filteredApis = App.state.apis;
+            if (App.state.searchQuery) {
+                filteredApis = App.state.apis.filter(api => 
+                    api.title.toLowerCase().includes(App.state.searchQuery) || 
+                    api.path.toLowerCase().includes(App.state.searchQuery) ||
+                    api.method.toLowerCase().includes(App.state.searchQuery)
                 );
             }
 
-            if (filteredApis.length === 0 && projectsData.length === 0) {
+            if (filteredApis.length === 0 && App.state.projects.length === 0) {
                 emptyTitle.textContent = "No hay APIs documentadas";
                 emptyDesc.textContent = "Agrega una nueva API o importa tu archivo TXT base de datos.";
                 emptyState.classList.remove('hidden');
-            } else if (filteredApis.length === 0 && currentSearchQuery !== '') {
+            } else if (filteredApis.length === 0 && App.state.searchQuery !== '') {
                 emptyTitle.textContent = "Sin resultados";
                 emptyDesc.textContent = "No se encontraron APIs que coincidan con tu búsqueda.";
                 emptyState.classList.remove('hidden');
             } else {
                 emptyState.classList.add('hidden');
                 
-                // Agrupar APIs filtradas
                 const apisByProject = filteredApis.reduce((acc, api) => {
                     const proj = api.project || 'Sin Proyecto';
                     if (!acc[proj]) acc[proj] = [];
@@ -366,18 +430,18 @@
                 }, {});
 
                 const renderProjectBlock = (projName, projDesc, apis = []) => {
-                    if (apis.length === 0 && currentSearchQuery !== '') return; // Ocultar proyectos vacíos si hay búsqueda
+                    if (apis.length === 0 && App.state.searchQuery !== '') return;
                     
                     const projectSection = document.createElement('div');
                     projectSection.className = 'mb-8';
                     
-                const safeKey = encodeURIComponent(projName);
-                    const isCollapsed = collapsedProjects.has(projName);
+                    const safeKey = encodeURIComponent(projName);
+                    const isCollapsed = App.state.collapsedProjects.has(projName);
                     
                     projectSection.innerHTML = `
                         <div class="mb-4 border-b border-gray-300 pb-2">
                             <div class="flex justify-between items-center cursor-pointer select-none group py-1"
-                                 onclick="toggleProject('${escapeHtml(projName).replace(/'/g, "\\'")}')"
+                                 data-project-toggle="${escapeHtml(projName)}"
                                  title="Clic para colapsar/expandir">
                                 <div class="flex items-center gap-2">
                                     <svg class="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
@@ -405,18 +469,17 @@
 
                         const apiCard = document.createElement('div');
                         apiCard.className = `border rounded-lg shadow-sm bg-white overflow-hidden ${methodClass}`;
-                        
-                        // Preparar payload safe for HTML attribute in JS
-                        const safeReq = api.reqBody ? api.reqBody.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n') : '';
-                        const safeRes = api.resBody ? api.resBody.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n') : '';
-                        const safeErr = api.errBody ? api.errBody.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n') : '';
+
+                        const safeReq = escapeHtml(api.reqBody || '');
+                        const safeRes = escapeHtml(api.resBody || '');
+                        const safeErr = escapeHtml(api.errBody || '');
 
                         apiCard.innerHTML = `
-                            <div class="flex items-center justify-between p-3 cursor-pointer hover:bg-black hover:bg-opacity-5 transition" onclick="toggleDetails(${api.id})">
+                            <div class="flex items-center justify-between p-3 cursor-pointer hover:bg-black hover:bg-opacity-5 transition" data-api-toggle="${api.id}">
                                 <div class="flex items-center gap-3 w-full truncate mr-2">
                                     <span class="${badgeClass} font-bold px-4 py-1 text-sm rounded min-w-[5rem] text-center">${api.method}</span>
-                                    <span class="font-mono font-bold text-gray-700 truncate">${api.path}</span>
-                                    <span class="text-gray-500 text-sm hidden md:inline truncate">- ${api.title}</span>
+                                    <span class="font-mono font-bold text-gray-700 truncate">${escapeHtml(api.path)}</span>
+                                    <span class="text-gray-500 text-sm hidden md:inline truncate">- ${escapeHtml(api.title)}</span>
                                 </div>
                                 <svg id="icon-${api.id}" class="w-5 h-5 text-gray-500 transform transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                             </div>
@@ -424,31 +487,31 @@
                             <div id="details-${api.id}" class="hidden border-t border-gray-200 bg-white p-4">
                                 <div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4">
                                     <div>
-                                        <h4 class="text-lg font-bold text-gray-800 break-words">${api.title}</h4>
-                                        <p class="text-gray-600 mt-1 break-words">${api.description}</p>
+                                        <h4 class="text-lg font-bold text-gray-800 break-words">${escapeHtml(api.title)}</h4>
+                                        <p class="text-gray-600 mt-1 break-words">${escapeHtml(api.description)}</p>
                                     </div>
                                     <div class="flex gap-2 flex-shrink-0 flex-wrap">
-                                        <button onclick="exportToWord(${api.id})" class="text-green-600 hover:text-green-800 text-sm font-medium px-3 py-1 border border-green-200 rounded hover:bg-green-50 transition flex items-center gap-1" title="Exportar a Word">
+                                        <button data-export-word="${api.id}" class="text-green-600 hover:text-green-800 text-sm font-medium px-3 py-1 border border-green-200 rounded hover:bg-green-50 transition flex items-center gap-1" title="Exportar a Word">
                                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1.8 14.8L10 12.6l-2.2 4.2H6l3.3-5.6L6.3 6h2l1.7 3.8 1.7-3.8h2l-3 5.2 3.3 5.6h-1.8z"/></svg>
                                             Word
                                         </button>
-                                        <button onclick="editApi(${api.id})" class="text-blue-600 hover:text-blue-800 text-sm font-medium px-3 py-1 border border-blue-200 rounded hover:bg-blue-50 transition">Editar</button>
-                                        <button onclick="deleteApi(${api.id})" class="text-red-500 hover:text-red-700 text-sm font-medium px-3 py-1 border border-red-200 rounded hover:bg-red-50 transition">Eliminar</button>
+                                        <button data-edit-api="${api.id}" class="text-blue-600 hover:text-blue-800 text-sm font-medium px-3 py-1 border border-blue-200 rounded hover:bg-blue-50 transition">Editar</button>
+                                        <button data-delete-api="${api.id}" class="text-red-500 hover:text-red-700 text-sm font-medium px-3 py-1 border border-red-200 rounded hover:bg-red-50 transition">Eliminar</button>
                                     </div>
                                 </div>
                                 
                                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
                                     <div class="overflow-hidden">
                                         <h5 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Request Payload</h5>
-                                        ${api.reqBody ? `<pre class="max-h-96"><code>${escapeHtml(api.reqBody)}</code><button class="copy-btn" onclick="copyToClipboard(this, '${safeReq}')">Copiar JSON</button></pre>` : '<p class="text-sm text-gray-400 italic">No requiere payload</p>'}
+                                        ${api.reqBody ? `<pre class="max-h-96"><code>${escapeHtml(api.reqBody)}</code><button class="copy-btn" data-copy-text="${safeReq}">Copiar JSON</button></pre>` : '<p class="text-sm text-gray-400 italic">No requiere payload</p>'}
                                     </div>
                                     <div class="overflow-hidden">
                                         <h5 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Response Payload (Success)</h5>
-                                        ${api.resBody ? `<pre class="max-h-96"><code>${escapeHtml(api.resBody)}</code><button class="copy-btn" onclick="copyToClipboard(this, '${safeRes}')">Copiar JSON</button></pre>` : '<p class="text-sm text-gray-400 italic">Sin ejemplo de respuesta</p>'}
+                                        ${api.resBody ? `<pre class="max-h-96"><code>${escapeHtml(api.resBody)}</code><button class="copy-btn" data-copy-text="${safeRes}">Copiar JSON</button></pre>` : '<p class="text-sm text-gray-400 italic">Sin ejemplo de respuesta</p>'}
                                     </div>
                                     <div class="overflow-hidden">
                                         <h5 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Error Payload (400/500)</h5>
-                                        ${api.errBody ? `<pre class="max-h-96"><code>${escapeHtml(api.errBody)}</code><button class="copy-btn" onclick="copyToClipboard(this, '${safeErr}')">Copiar JSON</button></pre>` : '<p class="text-sm text-gray-400 italic">Sin ejemplo de error</p>'}
+                                        ${api.errBody ? `<pre class="max-h-96"><code>${escapeHtml(api.errBody)}</code><button class="copy-btn" data-copy-text="${safeErr}">Copiar JSON</button></pre>` : '<p class="text-sm text-gray-400 italic">Sin ejemplo de error</p>'}
                                     </div>
                                 </div>
                             </div>
@@ -459,7 +522,7 @@
                     listContainer.appendChild(projectSection);
                 };
 
-                projectsData.forEach(p => {
+                App.state.projects.forEach(p => {
                     const apis = apisByProject[p.name] || [];
                     renderProjectBlock(p.name, p.description, apis);
                     delete apisByProject[p.name];
@@ -476,18 +539,17 @@
             const body = document.getElementById(`proj-body-${safeKey}`);
             const icon = document.getElementById(`proj-icon-${safeKey}`);
             if (!body) return;
-            if (collapsedProjects.has(projName)) {
-                collapsedProjects.delete(projName);
+            if (App.state.collapsedProjects.has(projName)) {
+                App.state.collapsedProjects.delete(projName);
                 body.classList.remove('hidden');
                 icon.classList.add('rotate-180');
             } else {
-                collapsedProjects.add(projName);
+                App.state.collapsedProjects.add(projName);
                 body.classList.add('hidden');
                 icon.classList.remove('rotate-180');
             }
         }
 
-        // --- GESTIÓN DE PROYECTOS ---
         function openProjectModal() {
             document.getElementById('p_name').value = '';
             document.getElementById('p_desc').value = '';
@@ -504,13 +566,13 @@
             const container = document.getElementById('project-list-container');
             container.innerHTML = '';
             
-            if(projectsData.length === 0) {
+            if(App.state.projects.length === 0) {
                 container.innerHTML = '<p class="text-gray-500 text-sm italic">No hay proyectos registrados.</p>';
                 return;
             }
 
-            projectsData.forEach(p => {
-                const apiCount = apiData.filter(a => a.project === p.name).length;
+            App.state.projects.forEach(p => {
+                const apiCount = App.state.apis.filter(a => a.project === p.name).length;
                 const pEl = document.createElement('div');
                 pEl.className = "flex justify-between items-center p-3 border rounded hover:bg-gray-50 transition gap-2";
                 pEl.innerHTML = `
@@ -521,10 +583,10 @@
                         <p class="text-xs text-gray-500 truncate">${escapeHtml(p.description) || '<span class="italic">Sin descripción</span>'}</p>
                     </div>
                     <div class="flex gap-1 flex-shrink-0">
-                        <button onclick="editProject(${p.id})" class="text-blue-500 hover:text-blue-700 p-2" title="Editar proyecto">
+                        <button data-edit-project="${p.id}" class="text-blue-500 hover:text-blue-700 p-2" title="Editar proyecto" aria-label="Editar proyecto ${escapeHtml(p.name)}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                         </button>
-                        <button onclick="deleteProject(${p.id})" class="text-red-500 hover:text-red-700 p-2" title="Eliminar proyecto">
+                        <button data-delete-project="${p.id}" class="text-red-500 hover:text-red-700 p-2" title="Eliminar proyecto" aria-label="Eliminar proyecto ${escapeHtml(p.name)}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                         </button>
                     </div>
@@ -534,7 +596,7 @@
         }
 
         function editProject(id) {
-            const p = projectsData.find(p => p.id === id);
+            const p = App.state.projects.find(p => p.id === id);
             if (!p) return;
             document.getElementById('p_editing_id').value = id;
             document.getElementById('p_name').value = p.name;
@@ -561,23 +623,20 @@
         function saveProject() {
             const editingId = document.getElementById('p_editing_id').value;
             if (editingId) {
-                // MODO EDICIÓN
                 const name = document.getElementById('p_name').value.trim();
                 const desc = document.getElementById('p_desc').value.trim();
                 if (!name) { showNotification('El nombre del proyecto es obligatorio.', 'error'); return; }
                 const id = parseInt(editingId);
-                const existing = projectsData.find(p => p.name.toLowerCase() === name.toLowerCase() && p.id !== id);
+                const existing = App.state.projects.find(p => p.name.toLowerCase() === name.toLowerCase() && p.id !== id);
                 if (existing) { showNotification('Ya existe un proyecto con ese nombre.', 'error'); return; }
-                const oldName = projectsData.find(p => p.id === id).name;
-                // Actualizar nombre en APIs asociadas
-                apiData = apiData.map(api => api.project === oldName ? { ...api, project: name } : api);
-                projectsData = projectsData.map(p => p.id === id ? { ...p, name, description: desc } : p);
+                const oldName = App.state.projects.find(p => p.id === id).name;
+                App.state.apis = App.state.apis.map(api => api.project === oldName ? { ...api, project: name } : api);
+                App.state.projects = App.state.projects.map(p => p.id === id ? { ...p, name, description: desc } : p);
                 saveState();
                 cancelEditProject();
                 renderProjects();
                 showNotification('Proyecto actualizado correctamente.', 'success');
             } else {
-                // MODO CREACIÓN
                 addProject();
             }
         }
@@ -591,13 +650,13 @@
                 return;
             }
             
-            if (projectsData.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+            if (App.state.projects.some(p => p.name.toLowerCase() === name.toLowerCase())) {
                 showNotification('Ya existe un proyecto con ese nombre.', 'error');
                 return;
             }
-            cancelEditProject(); // reset form state
+            cancelEditProject();
 
-            projectsData.push({
+            App.state.projects.push({
                 id: Date.now(),
                 name: name,
                 description: desc
@@ -612,16 +671,16 @@
         }
 
         function deleteProject(id) {
-            const proj = projectsData.find(p => p.id === id);
+            const proj = App.state.projects.find(p => p.id === id);
             if(confirm(`¿Eliminar proyecto "${proj.name}"? Las APIs asociadas quedarán sin proyecto.`)) {
-                apiData = apiData.map(api => {
+                App.state.apis = App.state.apis.map(api => {
                     if (api.project === proj.name) {
                         return { ...api, project: '' };
                     }
                     return api;
                 });
                 
-                projectsData = projectsData.filter(p => p.id !== id);
+                App.state.projects = App.state.projects.filter(p => p.id !== id);
                 saveState(); 
                 
                 renderProjects();
@@ -629,9 +688,8 @@
             }
         }
 
-        // --- ACCIONES PRINCIPALES API ---
-        function toggleDetails(id) {
-            if (event.target.closest('button')) return;
+        function toggleDetails(id, event) {
+            if (event && event.target.closest('button')) return;
 
             const detailsDiv = document.getElementById(`details-${id}`);
             const icon = document.getElementById(`icon-${id}`);
@@ -647,15 +705,15 @@
         function openModal() {
             document.getElementById('apiForm').reset();
             document.getElementById('modalTitle').textContent = 'Agregar Nueva Interfaz CPI';
-            editingApiId = null; 
+            App.state.editingApiId = null; 
             document.getElementById('modal').classList.remove('hidden');
         }
 
-        function editApi(id) {
-            const apiToEdit = apiData.find(api => api.id === id);
+        function editApi(id, event) {
+            const apiToEdit = App.state.apis.find(api => api.id === id);
             if (!apiToEdit) return;
 
-            editingApiId = id; 
+            App.state.editingApiId = id; 
             document.getElementById('modalTitle').textContent = 'Editar Interfaz CPI';
 
             document.getElementById('f_title').value = apiToEdit.title;
@@ -673,7 +731,7 @@
 
         function closeModal() {
             document.getElementById('modal').classList.add('hidden');
-            editingApiId = null; 
+            App.state.editingApiId = null; 
         }
 
         function saveApi(e) {
@@ -690,10 +748,10 @@
                 errBody: document.getElementById('f_err').value
             };
 
-            if (editingApiId !== null) {
-                const apiIndex = apiData.findIndex(api => api.id === editingApiId);
+            if (App.state.editingApiId !== null) {
+                const apiIndex = App.state.apis.findIndex(api => api.id === App.state.editingApiId);
                 if (apiIndex !== -1) {
-                    apiData[apiIndex] = { ...apiData[apiIndex], ...formData };
+                    App.state.apis[apiIndex] = { ...App.state.apis[apiIndex], ...formData };
                     showNotification('API actualizada correctamente.', 'success');
                 }
             } else {
@@ -701,7 +759,7 @@
                     id: Date.now(),
                     ...formData
                 };
-                apiData.push(newApi);
+                App.state.apis.push(newApi);
                 showNotification('API agregada correctamente.', 'success');
             }
 
@@ -710,9 +768,9 @@
             closeModal();
         }
 
-        function deleteApi(id) {
+        function deleteApi(id, event) {
             if (confirm('¿Estás seguro de que deseas eliminar esta documentación de API?')) {
-                apiData = apiData.filter(api => api.id !== id);
+                App.state.apis = App.state.apis.filter(api => api.id !== id);
                 saveState(); 
                 renderApis();
                 showNotification('API eliminada.', 'info');
@@ -720,9 +778,8 @@
             if (event) event.stopPropagation();
         }
 
-        // --- SISTEMAS DE EXPORTACIÓN (Word) ---
-        function exportToWord(id) {
-            const api = apiData.find(a => a.id === id);
+        function exportToWord(id, event) {
+            const api = App.state.apis.find(a => a.id === id);
             if (!api) return;
             if (event) event.stopPropagation();
 
@@ -733,7 +790,7 @@
 
         function openExportWordModal() {
             const select = document.getElementById('ew_project');
-            const allProjects = [...new Set(apiData.map(a => a.project || 'Sin Proyecto'))];
+            const allProjects = [...new Set(App.state.apis.map(a => a.project || 'Sin Proyecto'))];
             
             if (allProjects.length === 0) {
                 showNotification('No hay APIs documentadas para exportar.', 'error');
@@ -750,7 +807,7 @@
 
         function exportSelectedProjectToWord() {
             const projectName = document.getElementById('ew_project').value;
-            const projectApis = apiData.filter(a => (a.project || 'Sin Proyecto') === projectName);
+            const projectApis = App.state.apis.filter(a => (a.project || 'Sin Proyecto') === projectName);
             
             if (projectApis.length === 0) {
                 showNotification('El proyecto seleccionado no tiene APIs.', 'error');
@@ -783,7 +840,7 @@
                 <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
                 <head>
                     <meta charset='utf-8'>
-                    <title>${api.title}</title>
+                    <title>${escapeHtml(api.title)}</title>
                     <style>
                         body { font-family: 'Segoe UI', Arial, sans-serif; color: #333; }
                         h1 { color: #0055a4; border-bottom: 2px solid #0055a4; padding-bottom: 5px; font-size: 22px; }
@@ -798,17 +855,17 @@
                 <body>
                     <h1>DOCUMENTO DE ESPECIFICACIÓN DE INTERFAZ (API)</h1>
                     <table>
-                        <tr><th>Nombre de la Interfaz</th><td>${api.title}</td></tr>
-                        <tr><th>Proyecto</th><td>${api.project || 'Sin Proyecto'}</td></tr>
+                        <tr><th>Nombre de la Interfaz</th><td>${escapeHtml(api.title)}</td></tr>
+                        <tr><th>Proyecto</th><td>${escapeHtml(api.project || 'Sin Proyecto')}</td></tr>
                         <tr><th>Protocolo</th><td>REST / HTTP</td></tr>
                         <tr><th>Fecha de Documentación</th><td>${new Date().toLocaleDateString()}</td></tr>
                     </table>
                     <h2>1. DESCRIPCIÓN GENERAL</h2>
-                    <p>${api.description}</p>
+                    <p>${escapeHtml(api.description)}</p>
                     <h2>2. ENDPOINT</h2>
                     <div class="endpoint-box">
-                        <strong>Método HTTP:</strong> ${api.method}<br><br>
-                        <strong>Ruta (Path):</strong> ${api.path}
+                        <strong>Método HTTP:</strong> ${escapeHtml(api.method)}<br><br>
+                        <strong>Ruta (Path):</strong> ${escapeHtml(api.path)}
                     </div>
                     <h2>3. ESPECIFICACIÓN DE LA PETICIÓN (REQUEST)</h2>
                     ${api.reqBody ? `<pre>${escapeHtmlForWord(api.reqBody)}</pre>` : '<p><i>Esta interfaz no requiere envío de payload en el cuerpo de la petición.</i></p>'}
@@ -837,24 +894,23 @@
                 const pageBreak = index > 0 ? '<br clear="all" style="page-break-before:always" />' : '';
                 bodyContent += `
                     ${pageBreak}
-                    <h2>ESPECIFICACIÓN DE INTERFAZ: ${api.title}</h2>
+                    <h2>ESPECIFICACIÓN DE INTERFAZ: ${escapeHtml(api.title)}</h2>
                     <table>
-                        <tr><th>Nombre de la Interfaz</th><td>${api.title}</td></tr>
+                        <tr><th>Nombre de la Interfaz</th><td>${escapeHtml(api.title)}</td></tr>
                         <tr><th>Protocolo</th><td>REST / HTTP</td></tr>
                     </table>
                     <h3>1. DESCRIPCIÓN GENERAL</h3>
-                    <p>${api.description}</p>
+                    <p>${escapeHtml(api.description)}</p>
                     <h3>2. ENDPOINT</h3>
                     <div class="endpoint-box">
-                        <strong>Método HTTP:</strong> ${api.method}<br><br>
-                        <strong>Ruta (Path):</strong> ${api.path}
+                        <strong>Método HTTP:</strong> ${escapeHtml(api.method)}<br><br>
+                        <strong>Ruta (Path):</strong> ${escapeHtml(api.path)}
                     </div>
                     <h3>3. ESPECIFICACIÓN DE LA PETICIÓN (REQUEST)</h3>
                     ${api.reqBody ? `<pre>${escapeHtmlForWord(api.reqBody)}</pre>` : '<p><i>Esta interfaz no requiere envío de payload en el cuerpo de la petición.</i></p>'}
                     <h3>4. ESPECIFICACIÓN DE LA RESPUESTA (RESPONSE)</h3>
                     ${api.resBody ? `<pre>${escapeHtmlForWord(api.resBody)}</pre>` : '<p><i>Sin ejemplo de payload de respuesta definido.</i></p>'}
                     <h3>5. MANEJO DE ERRORES (EXCEPCIONES)</h3>
-                    <p>El sistema API puede devolver los siguientes códigos HTTP dependiendo del error.</p>
                     <h4>5.1. Tabla de Códigos HTTP y Significado</h4>
                     <table>
                         <tr><th>Código HTTP</th><th>Descripción General</th><th>Acción a tomar por el consumidor</th></tr>
@@ -892,14 +948,13 @@
             `;
         }
 
-        // --- SISTEMA DE BASE DE DATOS TXT (Import/Export) ---
         function exportDB() {
-            if (apiData.length === 0 && projectsData.length === 0) {
+            if (App.state.apis.length === 0 && App.state.projects.length === 0) {
                 showNotification('No hay datos para exportar.', 'error');
                 return;
             }
             
-            const dbExport = { version: CURRENT_DB_VERSION, projects: projectsData, apis: apiData };
+            const dbExport = { version: CURRENT_DB_VERSION, projects: App.state.projects, apis: App.state.apis };
             const dataStr = JSON.stringify(dbExport, null, 2);
             const blob = new Blob([dataStr], { type: "text/plain" });
             const url = URL.createObjectURL(blob);
@@ -918,6 +973,50 @@
             showNotification('Base de datos exportada a TXT correctamente.', 'success');
         }
 
+        function validateImportedData(data) {
+            const errors = [];
+            
+            if (data.apis && !Array.isArray(data.apis)) {
+                errors.push('apis debe ser un array');
+            }
+            if (data.projects && !Array.isArray(data.projects)) {
+                errors.push('projects debe ser un array');
+            }
+            
+            if (data.apis) {
+                const validMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+                data.apis.forEach((api, i) => {
+                    if (typeof api !== 'object' || api === null) {
+                        errors.push(`API[${i}]: debe ser un objeto`);
+                        return;
+                    }
+                    if (typeof api.title !== 'string') {
+                        errors.push(`API[${i}]: title debe ser un string`);
+                    }
+                    if (!api.method || !validMethods.includes(api.method)) {
+                        errors.push(`API[${i}]: method inválido "${api.method}"`);
+                    }
+                    if (typeof api.path !== 'string') {
+                        errors.push(`API[${i}]: path debe ser un string`);
+                    }
+                });
+            }
+            
+            if (data.projects) {
+                data.projects.forEach((proj, i) => {
+                    if (typeof proj !== 'object' || proj === null) {
+                        errors.push(`Project[${i}]: debe ser un objeto`);
+                        return;
+                    }
+                    if (typeof proj.name !== 'string') {
+                        errors.push(`Project[${i}]: name debe ser un string`);
+                    }
+                });
+            }
+            
+            return errors;
+        }
+
         function importDB(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -928,13 +1027,19 @@
                     const importedData = JSON.parse(e.target.result);
                     
                     if (Array.isArray(importedData)) {
-                        apiData = importedData;
-                        const uniqueProjectNames = [...new Set(apiData.map(api => api.project).filter(Boolean))];
-                        projectsData = uniqueProjectNames.map((name, idx) => ({ id: Date.now() + idx, name: name, description: "" }));
+                        App.state.apis = importedData;
+                        const uniqueProjectNames = [...new Set(App.state.apis.map(api => api.project).filter(Boolean))];
+                        App.state.projects = uniqueProjectNames.map((name, idx) => ({ id: Date.now() + idx, name: name, description: "" }));
                         showNotification('BD antigua (v1.0) cargada y migrada.', 'success');
                     } else if (importedData.apis) {
-                        apiData = importedData.apis || [];
-                        projectsData = importedData.projects || [];
+                        const errors = validateImportedData(importedData);
+                        if (errors.length > 0) {
+                            showNotification(`Errores de validación: ${errors.slice(0, 3).join('; ')}`, 'error');
+                            return;
+                        }
+                        
+                        App.state.apis = importedData.apis || [];
+                        App.state.projects = importedData.projects || [];
                         showNotification('Base de datos cargada correctamente.', 'success');
                     } else {
                         throw new Error("Formato inválido");
@@ -951,39 +1056,120 @@
             event.target.value = '';
         }
 
-        // Utilidades Varias
-        function escapeHtmlForWord(text) {
-            if (!text) return '';
-            return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
-        }
-
-        function escapeHtml(unsafe) {
-            if (!unsafe) return '';
-            return unsafe
-                 .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-
-        function showNotification(message, type) {
-            const notif = document.getElementById('notification');
-            const content = document.getElementById('notification-content');
+        document.addEventListener('DOMContentLoaded', function() {
+            loadState();
             
-            notif.classList.remove('hidden');
-            content.textContent = message;
-            
-            if (type === 'success') {
-                content.className = 'p-4 rounded-md shadow-sm bg-green-100 text-green-800 border border-green-200';
-            } else if (type === 'error') {
-                content.className = 'p-4 rounded-md shadow-sm bg-red-100 text-red-800 border border-red-200';
-            } else {
-                content.className = 'p-4 rounded-md shadow-sm bg-blue-100 text-blue-800 border border-blue-200';
-            }
+            const debouncedFilter = debounce(filterApis, 250);
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                debouncedFilter(e.target.value);
+            });
 
-            if (notif.timeoutId) clearTimeout(notif.timeoutId);
-            notif.timeoutId = setTimeout(() => { notif.classList.add('hidden'); }, 3000);
-        }
+            document.getElementById('btnAddApi').addEventListener('click', openModal);
+            document.getElementById('btnManageProjects').addEventListener('click', openProjectModal);
+            document.getElementById('importFile').addEventListener('change', importDB);
+            document.getElementById('btnExportDb').addEventListener('click', exportDB);
+            document.getElementById('btnExportWord').addEventListener('click', openExportWordModal);
 
-        // Inicializar la vista
-        renderApis();
+            document.getElementById('btnCloseModal').addEventListener('click', closeModal);
+            document.getElementById('btnCancelApi').addEventListener('click', closeModal);
+            document.getElementById('apiForm').addEventListener('submit', saveApi);
+
+            document.getElementById('btnCloseProjectModal').addEventListener('click', closeProjectModal);
+            document.getElementById('btnCloseProjectModalBottom').addEventListener('click', closeProjectModal);
+            document.getElementById('p_save_btn').addEventListener('click', saveProject);
+            document.getElementById('p_cancel_btn').addEventListener('click', cancelEditProject);
+
+            document.getElementById('btnCloseExportWordModal').addEventListener('click', closeExportWordModal);
+            document.getElementById('btnExportSelectedProject').addEventListener('click', exportSelectedProjectToWord);
+
+            document.getElementById('modal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+            document.getElementById('projectModal').addEventListener('click', function(e) {
+                if (e.target === this) closeProjectModal();
+            });
+            document.getElementById('exportWordModal').addEventListener('click', function(e) {
+                if (e.target === this) closeExportWordModal();
+            });
+
+            document.addEventListener('click', function(e) {
+                const copyBtn = e.target.closest('.copy-btn');
+                if (copyBtn) {
+                    const text = copyBtn.getAttribute('data-copy-text');
+                    if (text) {
+                        navigator.clipboard.writeText(text).then(() => {
+                            const originalText = copyBtn.innerText;
+                            copyBtn.innerText = "¡Copiado!";
+                            copyBtn.style.backgroundColor = "#49cc90";
+                            copyBtn.style.color = "white";
+                            setTimeout(() => {
+                                copyBtn.innerText = originalText;
+                                copyBtn.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+                                copyBtn.style.color = "#abb2bf";
+                            }, 2000);
+                        }).catch(err => {
+                            console.error('Error al copiar: ', err);
+                        });
+                    }
+                    return;
+                }
+
+                const apiToggle = e.target.closest('[data-api-toggle]');
+                if (apiToggle) {
+                    const id = parseInt(apiToggle.getAttribute('data-api-toggle'));
+                    toggleDetails(id, e);
+                    return;
+                }
+
+                const editBtn = e.target.closest('[data-edit-api]');
+                if (editBtn) {
+                    e.stopPropagation();
+                    const id = parseInt(editBtn.getAttribute('data-edit-api'));
+                    editApi(id, e);
+                    return;
+                }
+
+                const deleteBtn = e.target.closest('[data-delete-api]');
+                if (deleteBtn) {
+                    e.stopPropagation();
+                    const id = parseInt(deleteBtn.getAttribute('data-delete-api'));
+                    deleteApi(id, e);
+                    return;
+                }
+
+                const exportBtn = e.target.closest('[data-export-word]');
+                if (exportBtn) {
+                    e.stopPropagation();
+                    const id = parseInt(exportBtn.getAttribute('data-export-word'));
+                    exportToWord(id, e);
+                    return;
+                }
+
+                const projectToggle = e.target.closest('[data-project-toggle]');
+                if (projectToggle) {
+                    const name = projectToggle.getAttribute('data-project-toggle');
+                    toggleProject(name);
+                    return;
+                }
+
+                const editProjectBtn = e.target.closest('[data-edit-project]');
+                if (editProjectBtn) {
+                    const id = parseInt(editProjectBtn.getAttribute('data-edit-project'));
+                    editProject(id);
+                    return;
+                }
+
+                const deleteProjectBtn = e.target.closest('[data-delete-project]');
+                if (deleteProjectBtn) {
+                    const id = parseInt(deleteProjectBtn.getAttribute('data-delete-project'));
+                    deleteProject(id);
+                    return;
+                }
+            });
+
+            renderApis();
+        });
+    })();
     </script>
 </body>
 </html>
