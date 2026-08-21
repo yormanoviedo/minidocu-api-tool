@@ -1,4 +1,4 @@
-# MiniDocuAPITool v1.0.6
+# MiniDocuAPITool v1.0.7
 
 **MiniDocuAPITool** es una herramienta ligera, rápida y eficiente diseñada para documentar interfaces de integración (como iFlows de SAP CPI / SAP BTP) de manera sencilla y estructurada. Permite organizar tus APIs por proyectos, desglosar sus esquemas de campos de entrada, visualizar los payloads de petición/respuesta y generar documentación profesional en formato Word.
 
@@ -7,6 +7,8 @@
 * **Organización por Proyectos:** Agrupa tus iFlows por proyectos para mantener un orden claro.
 
 * **Configuración de Autenticación (Paso 0):** Permite configurar los datos de autenticación OAuth2 Client Credentials (SAP BTP) por proyecto (Token URL, Client ID, Client Secret, Scope y ejemplos de Request/Response).
+
+* **Headers — Cabeceras del Request:** Permite documentar cabeceras requeridas u opcionales (ej: Accept-Language, Content-Type, X-Correlation-ID) con sus valores de ejemplo y descripciones, incluyendo presets de un clic para cabeceras comunes.
 
 * **Schema — Campos del Request:** Desglosa campo a campo los parámetros de entrada del JSON especificando nombre, tipo de dato (Alfanumérico, Numérico, Booleano, Fecha, etc.), obligatoriedad, longitud/formato y descripción.
 
