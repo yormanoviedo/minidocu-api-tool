@@ -40,7 +40,7 @@ No requiere instalación ni servidores backend. Al ser una herramienta ejecutabl
 
 ### 🤝 Créditos y Agradecimientos
 
-Este proyecto ha sido desarrollado por **yormanoviedo**.
+Este proyecto ha sido ideado y estructurado por **yormanoviedo**.
 
 El desarrollo de esta herramienta ha contado con el apoyo y la colaboración técnica de **Gemini**, asistiendo en la arquitectura, persistencia de datos local, la lógica de generación del esquema dinámico, la exportación estructurada a Word y la optimización de la interfaz de usuario.
 
