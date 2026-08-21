@@ -22,7 +22,7 @@
 
 No requiere instalación ni servidores backend. Al ser una herramienta ejecutable en un único archivo HTML:
 
-1. Descarga el archivo `minidocu-api-tool-v2.html`.
+1. Descarga el archivo `minidocu-api-tool.html`.
 
 2. Ábrelo directamente en tu navegador favorito (*Google Chrome, Microsoft Edge, Firefox, etc.*).
 
