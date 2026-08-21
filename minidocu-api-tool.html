@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiniDocuAPITool by yormanoviedo v1.0.2</title>
+    <title>MiniDocuAPITool by yormanoviedo v1.0.6</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Estilos personalizados para emular Swagger */
@@ -61,7 +61,7 @@
                     </div>
                     <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
                         MiniDocuAPITool <span class="font-light text-sm hidden sm:inline">by yormanoviedo</span>
-                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-bold border border-blue-200 tracking-wide">v1.0.3</span>
+                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-bold border border-blue-200 tracking-wide">v1.0.6</span>
                     </h1>
                 </div>
                 
@@ -100,7 +100,7 @@
 
     <main class="max-w-6xl mx-auto px-4 py-8 mt-2">
         <div id="api-list" class="space-y-4">
-            </div>
+        </div>
         
         <div id="empty-state" class="text-center py-20 hidden">
             <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
@@ -109,8 +109,8 @@
         </div>
     </main>
 
-    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50 p-4 overflow-y-auto">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl my-8">
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-start z-50 p-4 overflow-y-auto">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl my-8">
             <div class="flex justify-between items-center border-b p-4">
                 <h3 id="modalTitle" class="text-lg font-bold text-gray-800">Agregar Nueva Interfaz CPI</h3>
                 <button onclick="closeModal()" class="text-gray-500 hover:text-gray-800">
@@ -140,7 +140,7 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Ruta del Endpoint (Path)</label>
                         <input type="text" id="f_path" required class="w-full border border-gray-300 rounded p-2 font-mono text-sm" placeholder="Ej: /http/v1/sales-orders">
@@ -149,6 +149,38 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Descripción breve</label>
                         <textarea id="f_desc" required rows="2" class="w-full border border-gray-300 rounded p-2 text-sm" placeholder="Describe qué hace este iFlow..."></textarea>
+                    </div>
+
+                    <!-- SCHEMA: Campos del Request -->
+                    <div class="border border-blue-100 rounded-lg overflow-hidden">
+                        <div class="bg-blue-50 px-3 py-2 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                            <span class="text-xs font-semibold text-blue-700 uppercase tracking-wide">Schema — Campos del Request</span>
+                            <span class="text-xs text-blue-400 ml-1">(opcional)</span>
+                        </div>
+                        <div class="p-3 bg-white">
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm" id="fields_table">
+                                    <thead>
+                                        <tr class="border-b border-gray-200">
+                                            <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2 w-36">Campo</th>
+                                            <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2 w-44">Tipo de dato</th>
+                                            <th class="text-center text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2 w-20">Requerido</th>
+                                            <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2 w-32">Long. / Formato</th>
+                                            <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2">Descripción</th>
+                                            <th class="pb-2 w-8"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="fields_body">
+                                        <!-- Filas dinámicas -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button type="button" onclick="addFieldRow()" class="mt-2 text-xs text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 hover:underline">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                Añadir campo
+                            </button>
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -175,8 +207,9 @@
         </div>
     </div>
 
-    <div id="projectModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50 p-4 overflow-y-auto">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl my-8">
+
+    <div id="projectModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-start z-50 p-4 overflow-y-auto">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl my-8">
             <div class="flex justify-between items-center border-b p-4">
                 <h3 class="text-lg font-bold text-gray-800">Gestionar Proyectos</h3>
                 <button onclick="closeProjectModal()" class="text-gray-500 hover:text-gray-800">
@@ -185,17 +218,69 @@
             </div>
             <div class="p-6">
                 <input type="hidden" id="p_editing_id" value="">
-                <div class="mb-2">
+                <div class="mb-3">
                     <p id="p_form_label" class="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-2">Nuevo Proyecto</p>
-                    <div class="flex gap-2 items-start">
-                        <input type="text" id="p_name" placeholder="Nombre del proyecto" class="flex-1 border border-gray-300 rounded p-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
-                        <input type="text" id="p_desc" placeholder="Descripción breve" class="flex-1 border border-gray-300 rounded p-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
-                        <button id="p_save_btn" onclick="saveProject()" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 font-medium text-sm whitespace-nowrap">Añadir</button>
-                        <button id="p_cancel_btn" onclick="cancelEditProject()" class="hidden bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 font-medium text-sm whitespace-nowrap">Cancelar</button>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
+                        <input type="text" id="p_name" placeholder="Nombre del proyecto" class="border border-gray-300 rounded p-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <input type="text" id="p_desc" placeholder="Descripción breve" class="border border-gray-300 rounded p-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <!-- AUTH SECTION -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <div class="bg-gray-50 px-3 py-2 flex items-center gap-2 cursor-pointer select-none" onclick="toggleAuthSection()">
+                            <svg class="w-4 h-4 text-orange-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                            <span class="text-xs font-semibold text-gray-700 uppercase tracking-wide">Configuración de Autenticación</span>
+                            <svg id="auth_section_icon" class="w-4 h-4 text-gray-400 ml-auto transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </div>
+                        <div id="auth_section_body" class="hidden p-4 space-y-3 border-t border-gray-200 bg-white">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Tipo de autenticación</label>
+                                <select id="p_auth_type" onchange="toggleAuthFields(this.value)" class="w-full border border-gray-300 rounded p-2 text-sm bg-white focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option value="none">Sin autenticación</option>
+                                    <option value="oauth2_cc">OAuth2 Client Credentials (SAP BTP)</option>
+                                </select>
+                            </div>
+                            <div id="p_oauth2_fields" class="hidden space-y-3">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">Token URL</label>
+                                        <input type="text" id="p_auth_token_url" placeholder="https://{subaccount}.authentication.eu10.hana.ondemand.com/oauth/token" class="w-full border border-gray-300 rounded p-2 text-xs font-mono focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">Scope (opcional)</label>
+                                        <input type="text" id="p_auth_scope" placeholder="openid" class="w-full border border-gray-300 rounded p-2 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">Client ID</label>
+                                        <input type="text" id="p_auth_client_id" placeholder="sb-myapp!t12345" class="w-full border border-gray-300 rounded p-2 text-xs font-mono focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1">Client Secret</label>
+                                        <div class="relative">
+                                            <input type="password" id="p_auth_client_secret" placeholder="(del Service Key de SAP BTP)" class="w-full border border-gray-300 rounded p-2 text-xs font-mono focus:ring-indigo-500 focus:border-indigo-500 pr-10">
+                                            <button type="button" onclick="toggleSecretVisibility()" class="absolute right-2 top-2 text-gray-400 hover:text-gray-600" title="Mostrar/ocultar">
+                                                <svg id="secret_eye_icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-600 mb-1">Ejemplo de Request al Token Endpoint</label>
+                                    <textarea id="p_auth_req_example" rows="4" class="w-full border border-gray-300 rounded p-2 text-xs font-mono bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500" placeholder="POST https://host/oauth/token&#10;Content-Type: application/x-www-form-urlencoded&#10;Authorization: Basic base64(clientId:clientSecret)&#10;&#10;grant_type=client_credentials"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-600 mb-1">Ejemplo de Response (Token)</label>
+                                    <textarea id="p_auth_res_example" rows="4" class="w-full border border-gray-300 rounded p-2 text-xs font-mono bg-gray-50 focus:ring-indigo-500 focus:border-indigo-500" placeholder='{"access_token": "eyJ...", "token_type": "Bearer", "expires_in": 43199}'></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-2 mt-3">
+                        <button id="p_cancel_btn" onclick="cancelEditProject()" class="hidden bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 font-medium text-sm">Cancelar</button>
+                        <button id="p_save_btn" onclick="saveProject()" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 font-medium text-sm">Añadir Proyecto</button>
                     </div>
                 </div>
                 <hr class="my-4 border-gray-200">
-                <div id="project-list-container" class="space-y-3 max-h-72 overflow-y-auto">
+                <div id="project-list-container" class="space-y-3 max-h-60 overflow-y-auto">
                 </div>
             </div>
             <div class="p-4 border-t bg-gray-50 flex justify-end">
@@ -245,7 +330,20 @@
             
             // Datos demo si está vacío
             projectsData = [
-                { id: 1, name: "VUELOS", description: "Integración con la tabla SFLIGHT de SAP para gestión de vuelos y reservas" }
+                {
+                    id: 1,
+                    name: "VUELOS",
+                    description: "Integración con la tabla SFLIGHT de SAP para gestión de vuelos y reservas",
+                    auth: {
+                        type: 'oauth2_cc',
+                        tokenUrl: 'https://{subaccount}.authentication.eu10.hana.ondemand.com/oauth/token',
+                        clientId: 'sb-vuelos-app!t12345',
+                        clientSecret: '{client_secret_from_service_key}',
+                        scope: 'openid',
+                        reqExample: 'POST https://{subaccount}.authentication.eu10.hana.ondemand.com/oauth/token\nContent-Type: application/x-www-form-urlencoded\nAuthorization: Basic base64(clientId:clientSecret)\n\ngrant_type=client_credentials',
+                        resExample: '{\n  "access_token": "eyJhbGciOiJSUzI1NiIsImprdSI6Imh0dHBzOi8vdm9sYXRpbGVhd...",\n  "token_type": "Bearer",\n  "expires_in": 43199,\n  "scope": "openid",\n  "jti": "abc123..."\n}'
+                    }
+                }
             ];
 
             apiData = [
@@ -379,11 +477,12 @@
                             <div class="flex justify-between items-center cursor-pointer select-none group py-1"
                                  onclick="toggleProject('${escapeHtml(projName).replace(/'/g, "\\'")}')"
                                  title="Clic para colapsar/expandir">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
-                                    <h2 class="text-xl font-bold text-gray-800">${escapeHtml(projName)}</h2>
-                                    <span class="text-sm font-normal text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full">${apis.length} API(s)</span>
-                                </div>
+                                 <div class="flex items-center gap-2 flex-wrap">
+                                     <svg class="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+                                     <h2 class="text-xl font-bold text-gray-800">${escapeHtml(projName)}</h2>
+                                     <span class="text-sm font-normal text-gray-500 bg-gray-200 px-2 py-0.5 rounded-full">${apis.length} API(s)</span>
+                                     ${(projectsData.find(p => p.name === projName) || {}).auth && (projectsData.find(p => p.name === projName)).auth.type === 'oauth2_cc' ? '<span class="text-xs bg-orange-100 text-orange-700 border border-orange-200 px-2 py-0.5 rounded-full font-semibold">&#128274; OAuth2</span>' : ''}
+                                 </div>
                                 <svg id="proj-icon-${safeKey}" 
                                      class="w-5 h-5 text-gray-400 transform transition-transform duration-200 ${isCollapsed ? '' : 'rotate-180'}" 
                                      fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -398,6 +497,40 @@
                     `;
                     
                     const apisContainer = projectSection.querySelector('.project-apis-container');
+
+                    // --- PASO 0: Bloque de Autenticación OAuth2 ---
+                    const projObj = projectsData.find(p => p.name === projName);
+                    if (projObj && projObj.auth && projObj.auth.type === 'oauth2_cc') {
+                        const auth = projObj.auth;
+                        const safeReqEx = auth.reqExample ? auth.reqExample.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n') : '';
+                        const safeResEx = auth.resExample ? auth.resExample.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n') : '';
+                        const authBlock = document.createElement('div');
+                        authBlock.className = 'mb-4 border border-orange-200 rounded-lg overflow-hidden';
+                        authBlock.innerHTML =
+                            '<div class="bg-orange-50 border-b border-orange-200 px-4 py-2.5 flex items-center gap-2 cursor-pointer select-none" onclick="this.nextElementSibling.classList.toggle(\'hidden\')">' +
+                              '<svg class="w-4 h-4 text-orange-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>' +
+                              '<span class="text-sm font-bold text-orange-800 uppercase tracking-wide">Paso 0 &mdash; Autenticación OAuth2 Client Credentials</span>' +
+                              '<span class="ml-auto text-xs bg-orange-200 text-orange-800 px-2 py-0.5 rounded-full font-medium hidden sm:inline">Requerido antes de llamar cualquier API</span>' +
+                            '</div>' +
+                            '<div class="p-4 bg-white">' +
+                              '<p class="text-sm text-gray-600 mb-4">Obtén un <strong>access_token</strong> llamando al token endpoint de SAP BTP. Úsalo en el header <code class="bg-orange-50 border border-orange-200 px-1.5 py-0.5 rounded font-mono text-xs text-orange-800">Authorization: Bearer {access_token}</code> en todas las APIs de este proyecto.</p>' +
+                              '<table class="w-full text-sm mb-4" style="border-collapse:collapse">' +
+                                '<tr style="border-bottom:1px solid #fed7aa"><td class="py-1.5 pr-4 font-semibold text-gray-500 text-xs uppercase tracking-wide w-32">Token URL</td><td class="py-1.5 font-mono text-xs text-gray-800 break-all">' + escapeHtml(auth.tokenUrl || '') + '</td></tr>' +
+                                '<tr style="border-bottom:1px solid #fed7aa"><td class="py-1.5 pr-4 font-semibold text-gray-500 text-xs uppercase tracking-wide">Client ID</td><td class="py-1.5 font-mono text-xs text-gray-800">' + escapeHtml(auth.clientId || '') + '</td></tr>' +
+                                '<tr style="border-bottom:1px solid #fed7aa"><td class="py-1.5 pr-4 font-semibold text-gray-500 text-xs uppercase tracking-wide">Client Secret</td><td class="py-1.5 font-mono text-xs text-gray-400 italic">' + (auth.clientSecret ? '&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull; (del Service Key)' : 'No configurado') + '</td></tr>' +
+                                (auth.scope ? '<tr><td class="py-1.5 pr-4 font-semibold text-gray-500 text-xs uppercase tracking-wide">Scope</td><td class="py-1.5 font-mono text-xs text-gray-800">' + escapeHtml(auth.scope) + '</td></tr>' : '') +
+                              '</table>' +
+                              '<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">' +
+                                '<div><h5 class="text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Request al Token Endpoint</h5>' +
+                                  (auth.reqExample ? '<pre class="max-h-48"><code>' + escapeHtml(auth.reqExample) + '</code><button class="copy-btn" onclick="copyToClipboard(this,\'' + safeReqEx + '\')">Copiar</button></pre>' : '<p class="text-xs text-gray-400 italic">Sin ejemplo definido</p>') +
+                                '</div>' +
+                                '<div><h5 class="text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Response (Token)</h5>' +
+                                  (auth.resExample ? '<pre class="max-h-48"><code>' + escapeHtml(auth.resExample) + '</code><button class="copy-btn" onclick="copyToClipboard(this,\'' + safeResEx + '\')">Copiar</button></pre>' : '<p class="text-xs text-gray-400 italic">Sin ejemplo definido</p>') +
+                                '</div>' +
+                              '</div>' +
+                            '</div>';
+                        apisContainer.appendChild(authBlock);
+                    }
 
                     apis.forEach((api) => {
                         const methodClass = `method-${api.method}`;
@@ -438,20 +571,51 @@
                                 </div>
                                 
                                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
-                                    <div class="overflow-hidden">
-                                        <h5 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Request Payload</h5>
-                                        ${api.reqBody ? `<pre class="max-h-96"><code>${escapeHtml(api.reqBody)}</code><button class="copy-btn" onclick="copyToClipboard(this, '${safeReq}')">Copiar JSON</button></pre>` : '<p class="text-sm text-gray-400 italic">No requiere payload</p>'}
-                                    </div>
-                                    <div class="overflow-hidden">
-                                        <h5 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Response Payload (Success)</h5>
-                                        ${api.resBody ? `<pre class="max-h-96"><code>${escapeHtml(api.resBody)}</code><button class="copy-btn" onclick="copyToClipboard(this, '${safeRes}')">Copiar JSON</button></pre>` : '<p class="text-sm text-gray-400 italic">Sin ejemplo de respuesta</p>'}
-                                    </div>
-                                    <div class="overflow-hidden">
-                                        <h5 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Error Payload (400/500)</h5>
-                                        ${api.errBody ? `<pre class="max-h-96"><code>${escapeHtml(api.errBody)}</code><button class="copy-btn" onclick="copyToClipboard(this, '${safeErr}')">Copiar JSON</button></pre>` : '<p class="text-sm text-gray-400 italic">Sin ejemplo de error</p>'}
-                                    </div>
-                                </div>
-                            </div>
+                                     <div class="overflow-hidden">
+                                         <h5 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Request Payload</h5>
+                                         ${api.reqBody ? `<pre class="max-h-96"><code>${escapeHtml(api.reqBody)}</code><button class="copy-btn" onclick="copyToClipboard(this, '${safeReq}')">Copiar JSON</button></pre>` : '<p class="text-sm text-gray-400 italic">No requiere payload</p>'}
+                                     </div>
+                                     <div class="overflow-hidden">
+                                         <h5 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Response Payload (Success)</h5>
+                                         ${api.resBody ? `<pre class="max-h-96"><code>${escapeHtml(api.resBody)}</code><button class="copy-btn" onclick="copyToClipboard(this, '${safeRes}')">Copiar JSON</button></pre>` : '<p class="text-sm text-gray-400 italic">Sin ejemplo de respuesta</p>'}
+                                     </div>
+                                     <div class="overflow-hidden">
+                                         <h5 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Error Payload (400/500)</h5>
+                                         ${api.errBody ? `<pre class="max-h-96"><code>${escapeHtml(api.errBody)}</code><button class="copy-btn" onclick="copyToClipboard(this, '${safeErr}')">Copiar JSON</button></pre>` : '<p class="text-sm text-gray-400 italic">Sin ejemplo de error</p>'}
+                                     </div>
+                                 </div>
+                                 ${(api.fields && api.fields.length > 0) ? `
+                                 <div class="mt-6 border border-blue-100 rounded-lg overflow-hidden">
+                                     <div class="bg-blue-50 px-4 py-2 flex items-center gap-2 border-b border-blue-100">
+                                         <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                                         <span class="text-xs font-bold text-blue-700 uppercase tracking-wide">Schema — Campos del Request</span>
+                                         <span class="ml-auto text-xs text-blue-400">${api.fields.length} campo(s)</span>
+                                     </div>
+                                     <div class="overflow-x-auto">
+                                         <table class="w-full text-sm">
+                                             <thead class="bg-gray-50 border-b border-gray-200">
+                                                 <tr>
+                                                     <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Campo</th>
+                                                     <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Tipo</th>
+                                                     <th class="text-center text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Req.</th>
+                                                     <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Long. / Formato</th>
+                                                     <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Descripción</th>
+                                                 </tr>
+                                             </thead>
+                                             <tbody>
+                                                 ${api.fields.map((f, i) => `
+                                                 <tr class="${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} border-b border-gray-100">
+                                                     <td class="px-4 py-2 font-mono font-semibold text-blue-700 text-xs">${escapeHtml(f.name)}</td>
+                                                     <td class="px-4 py-2 text-xs"><span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-medium">${escapeHtml(f.type)}</span></td>
+                                                     <td class="px-4 py-2 text-center text-xs">${f.required ? '<span class="text-green-600 font-bold">&#10003;</span>' : '<span class="text-gray-400">—</span>'}</td>
+                                                     <td class="px-4 py-2 text-xs text-gray-600 font-mono">${escapeHtml(f.length || '—')}</td>
+                                                     <td class="px-4 py-2 text-xs text-gray-600">${escapeHtml(f.description || '—')}</td>
+                                                 </tr>`).join('')}
+                                             </tbody>
+                                         </table>
+                                     </div>
+                                 </div>` : ''}
+                             </div>
                         `;
                         apisContainer.appendChild(apiCard);
                     });
@@ -489,10 +653,45 @@
 
         // --- GESTIÓN DE PROYECTOS ---
         function openProjectModal() {
-            document.getElementById('p_name').value = '';
-            document.getElementById('p_desc').value = '';
+            cancelEditProject();
             renderProjects();
             document.getElementById('projectModal').classList.remove('hidden');
+        }
+
+        // --- AUTH HELPERS ---
+        function toggleAuthSection() {
+            const body = document.getElementById('auth_section_body');
+            const icon = document.getElementById('auth_section_icon');
+            body.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        }
+
+        function toggleAuthFields(type) {
+            const fields = document.getElementById('p_oauth2_fields');
+            if (type === 'oauth2_cc') {
+                fields.classList.remove('hidden');
+            } else {
+                fields.classList.add('hidden');
+            }
+        }
+
+        function toggleSecretVisibility() {
+            const input = document.getElementById('p_auth_client_secret');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function getProjectAuthData() {
+            const type = document.getElementById('p_auth_type').value;
+            if (type === 'none') return { type: 'none' };
+            return {
+                type,
+                tokenUrl: document.getElementById('p_auth_token_url').value.trim(),
+                clientId: document.getElementById('p_auth_client_id').value.trim(),
+                clientSecret: document.getElementById('p_auth_client_secret').value.trim(),
+                scope: document.getElementById('p_auth_scope').value.trim(),
+                reqExample: document.getElementById('p_auth_req_example').value,
+                resExample: document.getElementById('p_auth_res_example').value
+            };
         }
 
         function closeProjectModal() {
@@ -542,8 +741,26 @@
             document.getElementById('p_form_label').textContent = 'Editando Proyecto';
             document.getElementById('p_form_label').className = 'text-xs font-semibold text-amber-600 uppercase tracking-wide mb-2';
             document.getElementById('p_save_btn').textContent = 'Guardar cambios';
-            document.getElementById('p_save_btn').className = 'bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600 font-medium text-sm whitespace-nowrap';
+            document.getElementById('p_save_btn').className = 'bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600 font-medium text-sm';
             document.getElementById('p_cancel_btn').classList.remove('hidden');
+            // Cargar campos de auth
+            const auth = p.auth || {};
+            const authType = auth.type || 'none';
+            document.getElementById('p_auth_type').value = authType;
+            toggleAuthFields(authType);
+            document.getElementById('p_auth_token_url').value = auth.tokenUrl || '';
+            document.getElementById('p_auth_client_id').value = auth.clientId || '';
+            document.getElementById('p_auth_client_secret').value = auth.clientSecret || '';
+            document.getElementById('p_auth_scope').value = auth.scope || '';
+            document.getElementById('p_auth_req_example').value = auth.reqExample || '';
+            document.getElementById('p_auth_res_example').value = auth.resExample || '';
+            // Abrir panel de auth si tiene config
+            if (authType !== 'none') {
+                const body = document.getElementById('auth_section_body');
+                const icon = document.getElementById('auth_section_icon');
+                body.classList.remove('hidden');
+                icon.classList.add('rotate-180');
+            }
             document.getElementById('p_name').focus();
         }
 
@@ -553,9 +770,21 @@
             document.getElementById('p_desc').value = '';
             document.getElementById('p_form_label').textContent = 'Nuevo Proyecto';
             document.getElementById('p_form_label').className = 'text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-2';
-            document.getElementById('p_save_btn').textContent = 'Añadir';
-            document.getElementById('p_save_btn').className = 'bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 font-medium text-sm whitespace-nowrap';
+            document.getElementById('p_save_btn').textContent = 'Añadir Proyecto';
+            document.getElementById('p_save_btn').className = 'bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 font-medium text-sm';
             document.getElementById('p_cancel_btn').classList.add('hidden');
+            // Reset auth fields
+            document.getElementById('p_auth_type').value = 'none';
+            toggleAuthFields('none');
+            document.getElementById('p_auth_token_url').value = '';
+            document.getElementById('p_auth_client_id').value = '';
+            document.getElementById('p_auth_client_secret').value = '';
+            document.getElementById('p_auth_scope').value = '';
+            document.getElementById('p_auth_req_example').value = '';
+            document.getElementById('p_auth_res_example').value = '';
+            // Colapsar panel auth
+            document.getElementById('auth_section_body').classList.add('hidden');
+            document.getElementById('auth_section_icon').classList.remove('rotate-180');
         }
 
         function saveProject() {
@@ -571,7 +800,7 @@
                 const oldName = projectsData.find(p => p.id === id).name;
                 // Actualizar nombre en APIs asociadas
                 apiData = apiData.map(api => api.project === oldName ? { ...api, project: name } : api);
-                projectsData = projectsData.map(p => p.id === id ? { ...p, name, description: desc } : p);
+                projectsData = projectsData.map(p => p.id === id ? { ...p, name, description: desc, auth: getProjectAuthData() } : p);
                 saveState();
                 cancelEditProject();
                 renderProjects();
@@ -600,7 +829,8 @@
             projectsData.push({
                 id: Date.now(),
                 name: name,
-                description: desc
+                description: desc,
+                auth: getProjectAuthData()
             });
             
             saveState(); 
@@ -644,8 +874,76 @@
             }
         }
 
+        // --- SCHEMA HELPERS ---
+        const FIELD_TYPES = [
+            'Alfanumérico','Numérico (Entero)','Numérico (Decimal)',
+            'Booleano (true/false)','Fecha (YYYYMMDD)','Fecha-Hora (ISO 8601)',
+            'Texto libre','Array','Objeto JSON'
+        ];
+
+        function addFieldRow(field = {}) {
+            const tbody = document.getElementById('fields_body');
+            const idx = Date.now() + Math.random();
+            const typeOptions = FIELD_TYPES.map(t =>
+                `<option value="${t}" ${field.type === t ? 'selected' : ''}>${t}</option>`
+            ).join('');
+            const tr = document.createElement('tr');
+            tr.className = 'border-b border-gray-100 group';
+            tr.dataset.fieldId = idx;
+            tr.innerHTML = `
+                <td class="py-1 pr-1">
+                    <input type="text" value="${escapeHtml(field.name || '')}" placeholder="ej: cedula"
+                        class="field-name w-full border border-gray-200 rounded px-2 py-1 text-xs font-mono focus:ring-blue-400 focus:border-blue-400">
+                </td>
+                <td class="py-1 pr-1">
+                    <select class="field-type w-full border border-gray-200 rounded px-2 py-1 text-xs bg-white focus:ring-blue-400 focus:border-blue-400">
+                        ${typeOptions}
+                    </select>
+                </td>
+                <td class="py-1 pr-1 text-center">
+                    <input type="checkbox" class="field-required w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-400" ${field.required ? 'checked' : ''}>
+                </td>
+                <td class="py-1 pr-1">
+                    <input type="text" value="${escapeHtml(field.length || '')}" placeholder="ej: 10 chars"
+                        class="field-length w-full border border-gray-200 rounded px-2 py-1 text-xs font-mono focus:ring-blue-400 focus:border-blue-400">
+                </td>
+                <td class="py-1 pr-1">
+                    <input type="text" value="${escapeHtml(field.description || '')}" placeholder="Descripción"
+                        class="field-desc w-full border border-gray-200 rounded px-2 py-1 text-xs focus:ring-blue-400 focus:border-blue-400">
+                </td>
+                <td class="py-1 text-center">
+                    <button type="button" onclick="removeFieldRow(this)" class="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity" title="Eliminar campo">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function removeFieldRow(btn) {
+            btn.closest('tr').remove();
+        }
+
+        function getFieldsFromTable() {
+            const rows = document.querySelectorAll('#fields_body tr');
+            const fields = [];
+            rows.forEach(tr => {
+                const name = tr.querySelector('.field-name').value.trim();
+                if (!name) return; // omitir filas vacías
+                fields.push({
+                    name,
+                    type: tr.querySelector('.field-type').value,
+                    required: tr.querySelector('.field-required').checked,
+                    length: tr.querySelector('.field-length').value.trim(),
+                    description: tr.querySelector('.field-desc').value.trim()
+                });
+            });
+            return fields;
+        }
+
         function openModal() {
             document.getElementById('apiForm').reset();
+            document.getElementById('fields_body').innerHTML = '';
             document.getElementById('modalTitle').textContent = 'Agregar Nueva Interfaz CPI';
             editingApiId = null; 
             document.getElementById('modal').classList.remove('hidden');
@@ -667,6 +965,10 @@
             document.getElementById('f_res').value = apiToEdit.resBody || '';
             document.getElementById('f_err').value = apiToEdit.errBody || '';
 
+            // Cargar campos del schema
+            document.getElementById('fields_body').innerHTML = '';
+            (apiToEdit.fields || []).forEach(f => addFieldRow(f));
+
             document.getElementById('modal').classList.remove('hidden');
             if (event) event.stopPropagation();
         }
@@ -687,7 +989,8 @@
                 description: document.getElementById('f_desc').value,
                 reqBody: document.getElementById('f_req').value,
                 resBody: document.getElementById('f_res').value,
-                errBody: document.getElementById('f_err').value
+                errBody: document.getElementById('f_err').value,
+                fields: getFieldsFromTable()
             };
 
             if (editingApiId !== null) {
@@ -805,18 +1108,36 @@
                     </table>
                     <h2>1. DESCRIPCIÓN GENERAL</h2>
                     <p>${api.description}</p>
-                    <h2>2. ENDPOINT</h2>
+                    ${(api.fields && api.fields.length > 0) ? `
+                    <h2>2. SCHEMA — CAMPOS DEL REQUEST</h2>
+                    <table>
+                        <tr>
+                            <th style="width:18%">Campo</th>
+                            <th style="width:22%">Tipo de dato</th>
+                            <th style="width:10%;text-align:center">Req.</th>
+                            <th style="width:18%">Long. / Formato</th>
+                            <th>Descripción</th>
+                        </tr>
+                        ${api.fields.map(f => `<tr>
+                            <td style="font-family:Courier New;font-size:12px;font-weight:bold">${f.name}</td>
+                            <td>${f.type}</td>
+                            <td style="text-align:center">${f.required ? '&#10003;' : '—'}</td>
+                            <td style="font-family:Courier New;font-size:12px">${f.length || '—'}</td>
+                            <td>${f.description || '—'}</td>
+                        </tr>`).join('')}
+                    </table>` : ''}
+                    <h2>${(api.fields && api.fields.length > 0) ? '3' : '2'}. ENDPOINT</h2>
                     <div class="endpoint-box">
                         <strong>Método HTTP:</strong> ${api.method}<br><br>
                         <strong>Ruta (Path):</strong> ${api.path}
                     </div>
-                    <h2>3. ESPECIFICACIÓN DE LA PETICIÓN (REQUEST)</h2>
+                    <h2>${(api.fields && api.fields.length > 0) ? '4' : '3'}. ESPECIFICACIÓN DE LA PETICIÓN (REQUEST)</h2>
                     ${api.reqBody ? `<pre>${escapeHtmlForWord(api.reqBody)}</pre>` : '<p><i>Esta interfaz no requiere envío de payload en el cuerpo de la petición.</i></p>'}
-                    <h2>4. ESPECIFICACIÓN DE LA RESPUESTA (RESPONSE)</h2>
+                    <h2>${(api.fields && api.fields.length > 0) ? '5' : '4'}. ESPECIFICACIÓN DE LA RESPUESTA (RESPONSE)</h2>
                     ${api.resBody ? `<pre>${escapeHtmlForWord(api.resBody)}</pre>` : '<p><i>Sin ejemplo de payload de respuesta definido.</i></p>'}
-                    <h2>5. MANEJO DE ERRORES (EXCEPCIONES)</h2>
+                    <h2>${(api.fields && api.fields.length > 0) ? '6' : '5'}. MANEJO DE ERRORES (EXCEPCIONES)</h2>
                     <p>El sistema API puede devolver los siguientes códigos HTTP dependiendo del error.</p>
-                    <h3>5.1. Tabla de Códigos HTTP y Significado</h3>
+                    <h3>${(api.fields && api.fields.length > 0) ? '6.1' : '5.1'}. Tabla de Códigos HTTP y Significado</h3>
                     <table>
                         <tr><th>Código HTTP</th><th>Descripción General</th><th>Acción a tomar por el consumidor</th></tr>
                         <tr><td><strong>400</strong></td><td>Bad Request</td><td>Revisar el formato del JSON y los campos obligatorios.</td></tr>
@@ -824,7 +1145,7 @@
                         <tr><td><strong>403</strong></td><td>Forbidden</td><td>El usuario no tiene roles asignados en SAP BTP.</td></tr>
                         <tr><td><strong>500</strong></td><td>Internal Server Error</td><td>Reintentar más tarde. Error de red o en SAP backend.</td></tr>
                     </table>
-                    <h3>5.2. Ejemplo de Respuesta de Error (HTTP 400/500)</h3>
+                    <h3>${(api.fields && api.fields.length > 0) ? '6.2' : '5.2'}. Ejemplo de Respuesta de Error (HTTP 400/500)</h3>
                     ${api.errBody ? `<pre>${escapeHtmlForWord(api.errBody)}</pre>` : '<p><i>Sin ejemplo de payload de error definido.</i></p>'}
                 </body>
                 </html>
@@ -832,7 +1153,27 @@
         }
 
         function buildWordHtmlForProject(projectName, apis) {
-            let bodyContent = `<h1>Documentación de Integración: ${escapeHtml(projectName)}</h1><p>Fecha de exportación: ${new Date().toLocaleDateString()}</p>`;
+            // Sección de autenticación (si aplica)
+            const projObj = projectsData.find(p => p.name === projectName);
+            let authSection = '';
+            if (projObj && projObj.auth && projObj.auth.type === 'oauth2_cc') {
+                const auth = projObj.auth;
+                authSection = `
+                    <h2 style="color:#b45309; border-bottom:2px solid #b45309; page-break-before:auto;">PASO 0: AUTENTICACIÓN (OAuth2 Client Credentials)</h2>
+                    <p>Antes de invocar cualquier API de este proyecto, es necesario obtener un <strong>access_token</strong> mediante OAuth2 Client Credentials en SAP BTP.</p>
+                    <table>
+                        <tr><th>Token URL</th><td style="font-family:Courier New;font-size:11px;word-break:break-all">${auth.tokenUrl || ''}</td></tr>
+                        <tr><th>Client ID</th><td style="font-family:Courier New;font-size:11px;">${auth.clientId || ''}</td></tr>
+                        <tr><th>Client Secret</th><td style="font-family:Courier New;font-size:11px;color:#6b7280;">${auth.clientSecret || '(del Service Key de SAP BTP)'}</td></tr>
+                        ${auth.scope ? '<tr><th>Scope</th><td style="font-family:Courier New;font-size:11px;">' + auth.scope + '</td></tr>' : ''}
+                    </table>
+                    <p><strong>Uso del token:</strong> Incluye el token en el header de <u>todas</u> las peticiones:<br>
+                    <code style="font-family:Courier New;font-size:11px;background:#fef3c7;padding:2px 4px;">Authorization: Bearer {access_token}</code></p>
+                    ${auth.reqExample ? '<h3>Request al Token Endpoint</h3><pre>' + escapeHtmlForWord(auth.reqExample) + '</pre>' : ''}
+                    ${auth.resExample ? '<h3>Response (Token)</h3><pre>' + escapeHtmlForWord(auth.resExample) + '</pre>' : ''}
+                `;
+            }
+            let bodyContent = '<h1>Documentación de Integración: ' + escapeHtml(projectName) + '</h1><p>Fecha de exportación: ' + new Date().toLocaleDateString() + '</p>' + authSection;
             apis.forEach((api, index) => {
                 const pageBreak = index > 0 ? '<br clear="all" style="page-break-before:always" />' : '';
                 bodyContent += `
@@ -844,18 +1185,38 @@
                     </table>
                     <h3>1. DESCRIPCIÓN GENERAL</h3>
                     <p>${api.description}</p>
-                    <h3>2. ENDPOINT</h3>
+                    
+                    ${(api.fields && api.fields.length > 0) ? `
+                    <h3>2. SCHEMA — CAMPOS DEL REQUEST</h3>
+                    <table>
+                        <tr>
+                            <th style="width:18%">Campo</th>
+                            <th style="width:22%">Tipo de dato</th>
+                            <th style="width:10%;text-align:center">Req.</th>
+                            <th style="width:18%">Long. / Formato</th>
+                            <th>Descripción</th>
+                        </tr>
+                        ${api.fields.map(f => `<tr>
+                            <td style="font-family:Courier New;font-size:12px;font-weight:bold">${escapeHtmlForWord(f.name)}</td>
+                            <td>${escapeHtmlForWord(f.type)}</td>
+                            <td style="text-align:center">${f.required ? '&#10003;' : '—'}</td>
+                            <td style="font-family:Courier New;font-size:12px">${escapeHtmlForWord(f.length) || '—'}</td>
+                            <td>${escapeHtmlForWord(f.description) || '—'}</td>
+                        </tr>`).join('')}
+                    </table>` : ''}
+
+                    <h3>${(api.fields && api.fields.length > 0) ? '3' : '2'}. ENDPOINT</h3>
                     <div class="endpoint-box">
                         <strong>Método HTTP:</strong> ${api.method}<br><br>
                         <strong>Ruta (Path):</strong> ${api.path}
                     </div>
-                    <h3>3. ESPECIFICACIÓN DE LA PETICIÓN (REQUEST)</h3>
+                    <h3>${(api.fields && api.fields.length > 0) ? '4' : '3'}. ESPECIFICACIÓN DE LA PETICIÓN (REQUEST)</h3>
                     ${api.reqBody ? `<pre>${escapeHtmlForWord(api.reqBody)}</pre>` : '<p><i>Esta interfaz no requiere envío de payload en el cuerpo de la petición.</i></p>'}
-                    <h3>4. ESPECIFICACIÓN DE LA RESPUESTA (RESPONSE)</h3>
+                    <h3>${(api.fields && api.fields.length > 0) ? '5' : '4'}. ESPECIFICACIÓN DE LA RESPUESTA (RESPONSE)</h3>
                     ${api.resBody ? `<pre>${escapeHtmlForWord(api.resBody)}</pre>` : '<p><i>Sin ejemplo de payload de respuesta definido.</i></p>'}
-                    <h3>5. MANEJO DE ERRORES (EXCEPCIONES)</h3>
+                    <h3>${(api.fields && api.fields.length > 0) ? '6' : '5'}. MANEJO DE ERRORES (EXCEPCIONES)</h3>
                     <p>El sistema API puede devolver los siguientes códigos HTTP dependiendo del error.</p>
-                    <h4>5.1. Tabla de Códigos HTTP y Significado</h4>
+                    <h4>${(api.fields && api.fields.length > 0) ? '6.1' : '5.1'}. Tabla de Códigos HTTP y Significado</h4>
                     <table>
                         <tr><th>Código HTTP</th><th>Descripción General</th><th>Acción a tomar por el consumidor</th></tr>
                         <tr><td><strong>400</strong></td><td>Bad Request</td><td>Revisar el formato del JSON y los campos obligatorios.</td></tr>
@@ -863,7 +1224,7 @@
                         <tr><td><strong>403</strong></td><td>Forbidden</td><td>El usuario no tiene roles asignados en SAP BTP.</td></tr>
                         <tr><td><strong>500</strong></td><td>Internal Server Error</td><td>Reintentar más tarde. Error de red o en SAP backend.</td></tr>
                     </table>
-                    <h4>5.2. Ejemplo de Respuesta de Error (HTTP 400/500)</h4>
+                    <h4>${(api.fields && api.fields.length > 0) ? '6.2' : '5.2'}. Ejemplo de Respuesta de Error (HTTP 400/500)</h4>
                     ${api.errBody ? `<pre>${escapeHtmlForWord(api.errBody)}</pre>` : '<p><i>Sin ejemplo de payload de error definido.</i></p>'}
                 `;
             });
