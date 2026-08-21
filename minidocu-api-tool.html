@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiniDocuAPITool by yormanoviedo v1.0.6</title>
+    <title>MiniDocuAPITool by yormanoviedo v1.0.7</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Estilos personalizados para emular Swagger */
@@ -61,7 +61,7 @@
                     </div>
                     <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
                         MiniDocuAPITool <span class="font-light text-sm hidden sm:inline">by yormanoviedo</span>
-                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-bold border border-blue-200 tracking-wide">v1.0.6</span>
+                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-bold border border-blue-200 tracking-wide">v1.0.7</span>
                     </h1>
                 </div>
                 
@@ -109,6 +109,7 @@
         </div>
     </main>
 
+    <!-- MODAL AGREGAR / EDITAR API -->
     <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-start z-50 p-4 overflow-y-auto">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl my-8">
             <div class="flex justify-between items-center border-b p-4">
@@ -149,6 +150,45 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Descripción breve</label>
                         <textarea id="f_desc" required rows="2" class="w-full border border-gray-300 rounded p-2 text-sm" placeholder="Describe qué hace este iFlow..."></textarea>
+                    </div>
+
+                    <!-- HEADERS: Cabeceras del Request -->
+                    <div class="border border-purple-100 rounded-lg overflow-hidden">
+                        <div class="bg-purple-50 px-3 py-2 flex items-center justify-between flex-wrap gap-2">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-purple-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2zM9 7h6M9 11h6M9 15h4"/></svg>
+                                <span class="text-xs font-semibold text-purple-800 uppercase tracking-wide">Headers — Cabeceras del Request</span>
+                                <span class="text-xs text-purple-400">(opcional)</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[10px] text-purple-500 font-medium hidden sm:inline">Añadir común:</span>
+                                <button type="button" onclick="addPresetHeader('Accept-Language', 'es-ES', true, 'Idioma preferido para respuestas y mensajes de error')" class="text-[10px] bg-purple-100 hover:bg-purple-200 text-purple-700 px-1.5 py-0.5 rounded font-mono transition">+ Accept-Language</button>
+                                <button type="button" onclick="addPresetHeader('Content-Type', 'application/json', true, 'Formato del cuerpo del mensaje')" class="text-[10px] bg-purple-100 hover:bg-purple-200 text-purple-700 px-1.5 py-0.5 rounded font-mono transition">+ Content-Type</button>
+                                <button type="button" onclick="addPresetHeader('X-Correlation-ID', 'uuid-1234-5678', false, 'Identificador único de trazabilidad de la petición')" class="text-[10px] bg-purple-100 hover:bg-purple-200 text-purple-700 px-1.5 py-0.5 rounded font-mono transition">+ X-Correlation-ID</button>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-white">
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm" id="headers_table">
+                                    <thead>
+                                        <tr class="border-b border-gray-200">
+                                            <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2 w-44">Header (Nombre)</th>
+                                            <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2 w-44">Valor Ejemplo</th>
+                                            <th class="text-center text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2 w-20">Requerido</th>
+                                            <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2">Descripción</th>
+                                            <th class="pb-2 w-8"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="headers_body">
+                                        <!-- Filas dinámicas de headers -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button type="button" onclick="addHeaderRow()" class="mt-2 text-xs text-purple-600 hover:text-purple-800 font-medium flex items-center gap-1 hover:underline">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                Añadir header personalizado
+                            </button>
+                        </div>
                     </div>
 
                     <!-- SCHEMA: Campos del Request -->
@@ -207,7 +247,7 @@
         </div>
     </div>
 
-
+    <!-- MODAL GESTIONAR PROYECTOS -->
     <div id="projectModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-start z-50 p-4 overflow-y-auto">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl my-8">
             <div class="flex justify-between items-center border-b p-4">
@@ -289,6 +329,7 @@
         </div>
     </div>
 
+    <!-- MODAL EXPORTAR WORD POR PROYECTO -->
     <div id="exportWordModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50 p-4 overflow-y-auto">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-sm my-8">
             <div class="flex justify-between items-center border-b p-4">
@@ -354,6 +395,10 @@
                     method: "GET",
                     path: "/http/v1/vuelos",
                     description: "Consulta la tabla SFLIGHT de SAP y retorna la lista de vuelos disponibles filtrados por aerolínea, origen y destino. Utiliza el iFlow de lectura sobre la entidad SFLIGHT del sistema SAP back-end.",
+                    headers: [
+                        { name: "Accept-Language", example: "es-ES", required: true, description: "Idioma en que se deben retornar los mensajes explicativos" },
+                        { name: "Content-Type", example: "application/json", required: true, description: "Formato del cuerpo de la petición" }
+                    ],
                     reqBody: "",
                     resBody: "{\n  \"vuelos\": [\n    {\n      \"mandt\": \"100\",\n      \"carrid\": \"LH\",\n      \"connid\": \"0400\",\n      \"fldate\": \"2026-07-10\",\n      \"price\": \"750.00\",\n      \"currency\": \"EUR\",\n      \"planetype\": \"A380-800\",\n      \"seatsmax\": 475,\n      \"seatsocc\": 320,\n      \"paymentsum\": \"240000.00\"\n    },\n    {\n      \"mandt\": \"100\",\n      \"carrid\": \"AA\",\n      \"connid\": \"0017\",\n      \"fldate\": \"2026-07-12\",\n      \"price\": \"430.00\",\n      \"currency\": \"USD\",\n      \"planetype\": \"747-400\",\n      \"seatsmax\": 385,\n      \"seatsocc\": 210,\n      \"paymentsum\": \"90300.00\"\n    }\n  ]\n}"
                 },
@@ -364,6 +409,11 @@
                     method: "POST",
                     path: "/http/v1/vuelos/reserva",
                     description: "Crea una reserva de asiento sobre un vuelo existente en la tabla SFLIGHT. El iFlow valida disponibilidad de asientos (SEATSOCC vs SEATSMAX), actualiza el registro en SAP y retorna el número de reserva generado.",
+                    headers: [
+                        { name: "Accept-Language", example: "es-ES", required: true, description: "Idioma para notificaciones" },
+                        { name: "Content-Type", example: "application/json", required: true, description: "Formato JSON" },
+                        { name: "X-Correlation-ID", example: "uuid-9876-5432", required: false, description: "ID para trazabilidad en logs BTP" }
+                    ],
                     reqBody: "{\n  \"carrid\": \"LH\",\n  \"connid\": \"0400\",\n  \"fldate\": \"2026-07-10\",\n  \"pasajero\": {\n    \"nombre\": \"Juan\",\n    \"apellido\": \"García\",\n    \"email\": \"juan.garcia@empresa.com\"\n  },\n  \"clase\": \"Y\"\n}",
                     resBody: "{\n  \"status\": \"SUCCESS\",\n  \"reserva_id\": \"RSV-20260710-00042\",\n  \"carrid\": \"LH\",\n  \"connid\": \"0400\",\n  \"fldate\": \"2026-07-10\",\n  \"asiento\": \"24B\",\n  \"clase\": \"Y\",\n  \"precio\": \"750.00\",\n  \"moneda\": \"EUR\",\n  \"mensaje\": \"Reserva creada exitosamente\"\n}"
                 },
@@ -374,6 +424,7 @@
                     method: "DELETE",
                     path: "/http/v1/vuelos/reserva/{reserva_id}",
                     description: "Cancela una reserva existente identificada por su ID. El iFlow actualiza el contador SEATSOCC de la tabla SFLIGHT en SAP, liberando el asiento, y registra la baja en la tabla SBOOK.",
+                    headers: [],
                     reqBody: "{\n  \"reserva_id\": \"RSV-20260710-00042\",\n  \"motivo\": \"Cambio de planes del pasajero\"\n}",
                     resBody: "{\n  \"status\": \"SUCCESS\",\n  \"reserva_id\": \"RSV-20260710-00042\",\n  \"mensaje\": \"Reserva cancelada. El asiento ha sido liberado correctamente.\",\n  \"reembolso\": {\n    \"importe\": \"750.00\",\n    \"moneda\": \"EUR\",\n    \"plazo_dias\": 5\n  }\n}"
                 }
@@ -469,7 +520,7 @@
                     const projectSection = document.createElement('div');
                     projectSection.className = 'mb-8';
                     
-                const safeKey = encodeURIComponent(projName);
+                    const safeKey = encodeURIComponent(projName);
                     const isCollapsed = collapsedProjects.has(projName);
                     
                     projectSection.innerHTML = `
@@ -569,7 +620,69 @@
                                         <button onclick="deleteApi(${api.id})" class="text-red-500 hover:text-red-700 text-sm font-medium px-3 py-1 border border-red-200 rounded hover:bg-red-50 transition">Eliminar</button>
                                     </div>
                                 </div>
-                                
+
+                                ${(api.headers && api.headers.length > 0) ? `
+                                <div class="mb-6 border border-purple-100 rounded-lg overflow-hidden">
+                                    <div class="bg-purple-50 px-4 py-2 flex items-center gap-2 border-b border-purple-100">
+                                        <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2zM9 7h6M9 11h6M9 15h4"/></svg>
+                                        <span class="text-xs font-bold text-purple-800 uppercase tracking-wide">Headers — Cabeceras del Request</span>
+                                        <span class="ml-auto text-xs text-purple-500">${api.headers.length} header(s)</span>
+                                    </div>
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full text-sm">
+                                            <thead class="bg-gray-50 border-b border-gray-200">
+                                                <tr>
+                                                    <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Header</th>
+                                                    <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Valor Ejemplo</th>
+                                                    <th class="text-center text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Req.</th>
+                                                    <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Descripción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${api.headers.map((h, i) => `
+                                                <tr class="${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} border-b border-gray-100">
+                                                    <td class="px-4 py-2 font-mono font-semibold text-purple-700 text-xs">${escapeHtml(h.name)}</td>
+                                                    <td class="px-4 py-2 text-xs font-mono text-gray-700">${escapeHtml(h.example || '—')}</td>
+                                                    <td class="px-4 py-2 text-center text-xs">${h.required ? '<span class="text-green-600 font-bold">&#10003;</span>' : '<span class="text-gray-400">—</span>'}</td>
+                                                    <td class="px-4 py-2 text-xs text-gray-600">${escapeHtml(h.description || '—')}</td>
+                                                </tr>`).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>` : ''}
+
+                                ${(api.fields && api.fields.length > 0) ? `
+                                <div class="mb-6 border border-blue-100 rounded-lg overflow-hidden">
+                                    <div class="bg-blue-50 px-4 py-2 flex items-center gap-2 border-b border-blue-100">
+                                        <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                                        <span class="text-xs font-bold text-blue-700 uppercase tracking-wide">Schema — Campos del Request</span>
+                                        <span class="ml-auto text-xs text-blue-400">${api.fields.length} campo(s)</span>
+                                    </div>
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full text-sm">
+                                            <thead class="bg-gray-50 border-b border-gray-200">
+                                                <tr>
+                                                    <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Campo</th>
+                                                    <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Tipo</th>
+                                                    <th class="text-center text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Req.</th>
+                                                    <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Long. / Formato</th>
+                                                    <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Descripción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${api.fields.map((f, i) => `
+                                                <tr class="${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} border-b border-gray-100">
+                                                    <td class="px-4 py-2 font-mono font-semibold text-blue-700 text-xs">${escapeHtml(f.name)}</td>
+                                                    <td class="px-4 py-2 text-xs"><span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-medium">${escapeHtml(f.type)}</span></td>
+                                                    <td class="px-4 py-2 text-center text-xs">${f.required ? '<span class="text-green-600 font-bold">&#10003;</span>' : '<span class="text-gray-400">—</span>'}</td>
+                                                    <td class="px-4 py-2 text-xs text-gray-600 font-mono">${escapeHtml(f.length || '—')}</td>
+                                                    <td class="px-4 py-2 text-xs text-gray-600">${escapeHtml(f.description || '—')}</td>
+                                                </tr>`).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>` : ''}
+
                                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
                                      <div class="overflow-hidden">
                                          <h5 class="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Request Payload</h5>
@@ -584,37 +697,6 @@
                                          ${api.errBody ? `<pre class="max-h-96"><code>${escapeHtml(api.errBody)}</code><button class="copy-btn" onclick="copyToClipboard(this, '${safeErr}')">Copiar JSON</button></pre>` : '<p class="text-sm text-gray-400 italic">Sin ejemplo de error</p>'}
                                      </div>
                                  </div>
-                                 ${(api.fields && api.fields.length > 0) ? `
-                                 <div class="mt-6 border border-blue-100 rounded-lg overflow-hidden">
-                                     <div class="bg-blue-50 px-4 py-2 flex items-center gap-2 border-b border-blue-100">
-                                         <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                                         <span class="text-xs font-bold text-blue-700 uppercase tracking-wide">Schema — Campos del Request</span>
-                                         <span class="ml-auto text-xs text-blue-400">${api.fields.length} campo(s)</span>
-                                     </div>
-                                     <div class="overflow-x-auto">
-                                         <table class="w-full text-sm">
-                                             <thead class="bg-gray-50 border-b border-gray-200">
-                                                 <tr>
-                                                     <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Campo</th>
-                                                     <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Tipo</th>
-                                                     <th class="text-center text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Req.</th>
-                                                     <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Long. / Formato</th>
-                                                     <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Descripción</th>
-                                                 </tr>
-                                             </thead>
-                                             <tbody>
-                                                 ${api.fields.map((f, i) => `
-                                                 <tr class="${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} border-b border-gray-100">
-                                                     <td class="px-4 py-2 font-mono font-semibold text-blue-700 text-xs">${escapeHtml(f.name)}</td>
-                                                     <td class="px-4 py-2 text-xs"><span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-medium">${escapeHtml(f.type)}</span></td>
-                                                     <td class="px-4 py-2 text-center text-xs">${f.required ? '<span class="text-green-600 font-bold">&#10003;</span>' : '<span class="text-gray-400">—</span>'}</td>
-                                                     <td class="px-4 py-2 text-xs text-gray-600 font-mono">${escapeHtml(f.length || '—')}</td>
-                                                     <td class="px-4 py-2 text-xs text-gray-600">${escapeHtml(f.description || '—')}</td>
-                                                 </tr>`).join('')}
-                                             </tbody>
-                                         </table>
-                                     </div>
-                                 </div>` : ''}
                              </div>
                         `;
                         apisContainer.appendChild(apiCard);
@@ -874,6 +956,71 @@
             }
         }
 
+        // --- HEADERS HELPERS ---
+        function addHeaderRow(header = {}) {
+            const tbody = document.getElementById('headers_body');
+            const idx = Date.now() + Math.random();
+            const tr = document.createElement('tr');
+            tr.className = 'border-b border-gray-100 group';
+            tr.dataset.headerId = idx;
+            tr.innerHTML = `
+                <td class="py-1 pr-1">
+                    <input type="text" value="${escapeHtml(header.name || '')}" placeholder="ej: Accept-Language"
+                        class="header-name w-full border border-gray-200 rounded px-2 py-1 text-xs font-mono text-purple-700 font-semibold focus:ring-purple-400 focus:border-purple-400">
+                </td>
+                <td class="py-1 pr-1">
+                    <input type="text" value="${escapeHtml(header.example || '')}" placeholder="ej: es-ES"
+                        class="header-example w-full border border-gray-200 rounded px-2 py-1 text-xs font-mono focus:ring-purple-400 focus:border-purple-400">
+                </td>
+                <td class="py-1 pr-1 text-center">
+                    <input type="checkbox" class="header-required w-4 h-4 rounded border-gray-300 text-purple-600 focus:ring-purple-400" ${header.required !== false ? 'checked' : ''}>
+                </td>
+                <td class="py-1 pr-1">
+                    <input type="text" value="${escapeHtml(header.description || '')}" placeholder="Descripción del header"
+                        class="header-desc w-full border border-gray-200 rounded px-2 py-1 text-xs focus:ring-purple-400 focus:border-purple-400">
+                </td>
+                <td class="py-1 text-center">
+                    <button type="button" onclick="removeHeaderRow(this)" class="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity" title="Eliminar header">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function addPresetHeader(name, example, required, description) {
+            // Verificar si ya existe para evitar duplicados exactos
+            const existingRows = document.querySelectorAll('#headers_body tr');
+            for (let tr of existingRows) {
+                const nameInput = tr.querySelector('.header-name');
+                if (nameInput && nameInput.value.trim().toLowerCase() === name.toLowerCase()) {
+                    showNotification(`El header ${name} ya está añadido.`, 'info');
+                    return;
+                }
+            }
+            addHeaderRow({ name, example, required, description });
+        }
+
+        function removeHeaderRow(btn) {
+            btn.closest('tr').remove();
+        }
+
+        function getHeadersFromTable() {
+            const rows = document.querySelectorAll('#headers_body tr');
+            const headers = [];
+            rows.forEach(tr => {
+                const name = tr.querySelector('.header-name').value.trim();
+                if (!name) return; // omitir filas vacías
+                headers.push({
+                    name,
+                    example: tr.querySelector('.header-example').value.trim(),
+                    required: tr.querySelector('.header-required').checked,
+                    description: tr.querySelector('.header-desc').value.trim()
+                });
+            });
+            return headers;
+        }
+
         // --- SCHEMA HELPERS ---
         const FIELD_TYPES = [
             'Alfanumérico','Numérico (Entero)','Numérico (Decimal)',
@@ -943,6 +1090,7 @@
 
         function openModal() {
             document.getElementById('apiForm').reset();
+            document.getElementById('headers_body').innerHTML = '';
             document.getElementById('fields_body').innerHTML = '';
             document.getElementById('modalTitle').textContent = 'Agregar Nueva Interfaz CPI';
             editingApiId = null; 
@@ -964,6 +1112,10 @@
             document.getElementById('f_req').value = apiToEdit.reqBody || '';
             document.getElementById('f_res').value = apiToEdit.resBody || '';
             document.getElementById('f_err').value = apiToEdit.errBody || '';
+
+            // Cargar headers
+            document.getElementById('headers_body').innerHTML = '';
+            (apiToEdit.headers || []).forEach(h => addHeaderRow(h));
 
             // Cargar campos del schema
             document.getElementById('fields_body').innerHTML = '';
@@ -987,10 +1139,11 @@
                 method: document.getElementById('f_method').value,
                 path: document.getElementById('f_path').value,
                 description: document.getElementById('f_desc').value,
+                headers: getHeadersFromTable(),
+                fields: getFieldsFromTable(),
                 reqBody: document.getElementById('f_req').value,
                 resBody: document.getElementById('f_res').value,
-                errBody: document.getElementById('f_err').value,
-                fields: getFieldsFromTable()
+                errBody: document.getElementById('f_err').value
             };
 
             if (editingApiId !== null) {
@@ -1082,15 +1235,90 @@
         }
 
         function buildWordHtmlForSingleApi(api) {
+            let secNum = 1;
+
+            let sectionsHtml = `
+                <h2>${secNum++}. DESCRIPCIÓN GENERAL</h2>
+                <p>${escapeHtmlForWord(api.description)}</p>
+            `;
+
+            if (api.headers && api.headers.length > 0) {
+                sectionsHtml += `
+                    <h2>${secNum++}. HEADERS — CABECERAS DEL REQUEST</h2>
+                    <table>
+                        <tr>
+                            <th style="width:25%">Header (Nombre)</th>
+                            <th style="width:25%">Valor Ejemplo</th>
+                            <th style="width:10%;text-align:center">Req.</th>
+                            <th>Descripción</th>
+                        </tr>
+                        ${api.headers.map(h => `<tr>
+                            <td style="font-family:Courier New;font-size:12px;font-weight:bold;color:#6b21a8">${escapeHtmlForWord(h.name)}</td>
+                            <td style="font-family:Courier New;font-size:12px">${escapeHtmlForWord(h.example) || '—'}</td>
+                            <td style="text-align:center">${h.required ? '&#10003;' : '—'}</td>
+                            <td>${escapeHtmlForWord(h.description) || '—'}</td>
+                        </tr>`).join('')}
+                    </table>
+                `;
+            }
+
+            if (api.fields && api.fields.length > 0) {
+                sectionsHtml += `
+                    <h2>${secNum++}. SCHEMA — CAMPOS DEL REQUEST</h2>
+                    <table>
+                        <tr>
+                            <th style="width:18%">Campo</th>
+                            <th style="width:22%">Tipo de dato</th>
+                            <th style="width:10%;text-align:center">Req.</th>
+                            <th style="width:18%">Long. / Formato</th>
+                            <th>Descripción</th>
+                        </tr>
+                        ${api.fields.map(f => `<tr>
+                            <td style="font-family:Courier New;font-size:12px;font-weight:bold">${escapeHtmlForWord(f.name)}</td>
+                            <td>${escapeHtmlForWord(f.type)}</td>
+                            <td style="text-align:center">${f.required ? '&#10003;' : '—'}</td>
+                            <td style="font-family:Courier New;font-size:12px">${escapeHtmlForWord(f.length) || '—'}</td>
+                            <td>${escapeHtmlForWord(f.description) || '—'}</td>
+                        </tr>`).join('')}
+                    </table>
+                `;
+            }
+
+            const errSec = secNum++;
+            sectionsHtml += `
+                <h2>${secNum++}. ENDPOINT</h2>
+                <div class="endpoint-box">
+                    <strong>Método HTTP:</strong> ${api.method}<br><br>
+                    <strong>Ruta (Path):</strong> ${api.path}
+                </div>
+                <h2>${secNum++}. ESPECIFICACIÓN DE LA PETICIÓN (REQUEST)</h2>
+                ${api.reqBody ? `<pre>${escapeHtmlForWord(api.reqBody)}</pre>` : '<p><i>Esta interfaz no requiere envío de payload en el cuerpo de la petición.</i></p>'}
+                <h2>${secNum++}. ESPECIFICACIÓN DE LA RESPUESTA (RESPONSE)</h2>
+                ${api.resBody ? `<pre>${escapeHtmlForWord(api.resBody)}</pre>` : '<p><i>Sin ejemplo de payload de respuesta definido.</i></p>'}
+                <h2>${errSec}. MANEJO DE ERRORES (EXCEPCIONES)</h2>
+                <p>El sistema API puede devolver los siguientes códigos HTTP dependiendo del error.</p>
+                <h3>${errSec}.1. Tabla de Códigos HTTP y Significado</h3>
+                <table>
+                    <tr><th>Código HTTP</th><th>Descripción General</th><th>Acción a tomar por el consumidor</th></tr>
+                    <tr><td><strong>400</strong></td><td>Bad Request</td><td>Revisar el formato del JSON y los campos obligatorios.</td></tr>
+                    <tr><td><strong>401</strong></td><td>Unauthorized</td><td>Renovar el token de acceso o revisar credenciales.</td></tr>
+                    <tr><td><strong>403</strong></td><td>Forbidden</td><td>El usuario no tiene roles asignados en SAP BTP.</td></tr>
+                    <tr><td><strong>500</strong></td><td>Internal Server Error</td><td>Reintentar más tarde. Error de red o en SAP backend.</td></tr>
+                </table>
+                <h3>${errSec}.2. Ejemplo de Respuesta de Error (HTTP 400/500)</h3>
+                ${api.errBody ? `<pre>${escapeHtmlForWord(api.errBody)}</pre>` : '<p><i>Sin ejemplo de payload de error definido.</i></p>'}
+            `;
+
             return `
                 <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
                 <head>
                     <meta charset='utf-8'>
-                    <title>${api.title}</title>
+                    <title>${escapeHtmlForWord(api.title)}</title>
                     <style>
                         body { font-family: 'Segoe UI', Arial, sans-serif; color: #333; }
                         h1 { color: #0055a4; border-bottom: 2px solid #0055a4; padding-bottom: 5px; font-size: 22px; }
                         h2 { color: #0073e6; margin-top: 20px; font-size: 16px; border-bottom: 1px solid #ccc; padding-bottom: 3px; }
+                        h3 { color: #0055a4; margin-top: 15px; font-size: 14px; }
                         table { border-collapse: collapse; width: 100%; margin-bottom: 15px; }
                         th, td { border: 1px solid #ccc; padding: 8px; text-align: left; font-size: 14px;}
                         th { background-color: #f2f2f2; font-weight: bold; width: 30%; }
@@ -1101,52 +1329,12 @@
                 <body>
                     <h1>DOCUMENTO DE ESPECIFICACIÓN DE INTERFAZ (API)</h1>
                     <table>
-                        <tr><th>Nombre de la Interfaz</th><td>${api.title}</td></tr>
-                        <tr><th>Proyecto</th><td>${api.project || 'Sin Proyecto'}</td></tr>
+                        <tr><th>Nombre de la Interfaz</th><td>${escapeHtmlForWord(api.title)}</td></tr>
+                        <tr><th>Proyecto</th><td>${escapeHtmlForWord(api.project || 'Sin Proyecto')}</td></tr>
                         <tr><th>Protocolo</th><td>REST / HTTP</td></tr>
                         <tr><th>Fecha de Documentación</th><td>${new Date().toLocaleDateString()}</td></tr>
                     </table>
-                    <h2>1. DESCRIPCIÓN GENERAL</h2>
-                    <p>${api.description}</p>
-                    ${(api.fields && api.fields.length > 0) ? `
-                    <h2>2. SCHEMA — CAMPOS DEL REQUEST</h2>
-                    <table>
-                        <tr>
-                            <th style="width:18%">Campo</th>
-                            <th style="width:22%">Tipo de dato</th>
-                            <th style="width:10%;text-align:center">Req.</th>
-                            <th style="width:18%">Long. / Formato</th>
-                            <th>Descripción</th>
-                        </tr>
-                        ${api.fields.map(f => `<tr>
-                            <td style="font-family:Courier New;font-size:12px;font-weight:bold">${f.name}</td>
-                            <td>${f.type}</td>
-                            <td style="text-align:center">${f.required ? '&#10003;' : '—'}</td>
-                            <td style="font-family:Courier New;font-size:12px">${f.length || '—'}</td>
-                            <td>${f.description || '—'}</td>
-                        </tr>`).join('')}
-                    </table>` : ''}
-                    <h2>${(api.fields && api.fields.length > 0) ? '3' : '2'}. ENDPOINT</h2>
-                    <div class="endpoint-box">
-                        <strong>Método HTTP:</strong> ${api.method}<br><br>
-                        <strong>Ruta (Path):</strong> ${api.path}
-                    </div>
-                    <h2>${(api.fields && api.fields.length > 0) ? '4' : '3'}. ESPECIFICACIÓN DE LA PETICIÓN (REQUEST)</h2>
-                    ${api.reqBody ? `<pre>${escapeHtmlForWord(api.reqBody)}</pre>` : '<p><i>Esta interfaz no requiere envío de payload en el cuerpo de la petición.</i></p>'}
-                    <h2>${(api.fields && api.fields.length > 0) ? '5' : '4'}. ESPECIFICACIÓN DE LA RESPUESTA (RESPONSE)</h2>
-                    ${api.resBody ? `<pre>${escapeHtmlForWord(api.resBody)}</pre>` : '<p><i>Sin ejemplo de payload de respuesta definido.</i></p>'}
-                    <h2>${(api.fields && api.fields.length > 0) ? '6' : '5'}. MANEJO DE ERRORES (EXCEPCIONES)</h2>
-                    <p>El sistema API puede devolver los siguientes códigos HTTP dependiendo del error.</p>
-                    <h3>${(api.fields && api.fields.length > 0) ? '6.1' : '5.1'}. Tabla de Códigos HTTP y Significado</h3>
-                    <table>
-                        <tr><th>Código HTTP</th><th>Descripción General</th><th>Acción a tomar por el consumidor</th></tr>
-                        <tr><td><strong>400</strong></td><td>Bad Request</td><td>Revisar el formato del JSON y los campos obligatorios.</td></tr>
-                        <tr><td><strong>401</strong></td><td>Unauthorized</td><td>Renovar el token de acceso o revisar credenciales.</td></tr>
-                        <tr><td><strong>403</strong></td><td>Forbidden</td><td>El usuario no tiene roles asignados en SAP BTP.</td></tr>
-                        <tr><td><strong>500</strong></td><td>Internal Server Error</td><td>Reintentar más tarde. Error de red o en SAP backend.</td></tr>
-                    </table>
-                    <h3>${(api.fields && api.fields.length > 0) ? '6.2' : '5.2'}. Ejemplo de Respuesta de Error (HTTP 400/500)</h3>
-                    ${api.errBody ? `<pre>${escapeHtmlForWord(api.errBody)}</pre>` : '<p><i>Sin ejemplo de payload de error definido.</i></p>'}
+                    ${sectionsHtml}
                 </body>
                 </html>
             `;
@@ -1176,47 +1364,69 @@
             let bodyContent = '<h1>Documentación de Integración: ' + escapeHtml(projectName) + '</h1><p>Fecha de exportación: ' + new Date().toLocaleDateString() + '</p>' + authSection;
             apis.forEach((api, index) => {
                 const pageBreak = index > 0 ? '<br clear="all" style="page-break-before:always" />' : '';
-                bodyContent += `
-                    ${pageBreak}
-                    <h2>ESPECIFICACIÓN DE INTERFAZ: ${api.title}</h2>
-                    <table>
-                        <tr><th>Nombre de la Interfaz</th><td>${api.title}</td></tr>
-                        <tr><th>Protocolo</th><td>REST / HTTP</td></tr>
-                    </table>
-                    <h3>1. DESCRIPCIÓN GENERAL</h3>
-                    <p>${api.description}</p>
-                    
-                    ${(api.fields && api.fields.length > 0) ? `
-                    <h3>2. SCHEMA — CAMPOS DEL REQUEST</h3>
-                    <table>
-                        <tr>
-                            <th style="width:18%">Campo</th>
-                            <th style="width:22%">Tipo de dato</th>
-                            <th style="width:10%;text-align:center">Req.</th>
-                            <th style="width:18%">Long. / Formato</th>
-                            <th>Descripción</th>
-                        </tr>
-                        ${api.fields.map(f => `<tr>
-                            <td style="font-family:Courier New;font-size:12px;font-weight:bold">${escapeHtmlForWord(f.name)}</td>
-                            <td>${escapeHtmlForWord(f.type)}</td>
-                            <td style="text-align:center">${f.required ? '&#10003;' : '—'}</td>
-                            <td style="font-family:Courier New;font-size:12px">${escapeHtmlForWord(f.length) || '—'}</td>
-                            <td>${escapeHtmlForWord(f.description) || '—'}</td>
-                        </tr>`).join('')}
-                    </table>` : ''}
+                let secNum = 1;
 
-                    <h3>${(api.fields && api.fields.length > 0) ? '3' : '2'}. ENDPOINT</h3>
+                let apiSections = `
+                    <h3>${secNum++}. DESCRIPCIÓN GENERAL</h3>
+                    <p>${escapeHtmlForWord(api.description)}</p>
+                `;
+
+                if (api.headers && api.headers.length > 0) {
+                    apiSections += `
+                        <h3>${secNum++}. HEADERS — CABECERAS DEL REQUEST</h3>
+                        <table>
+                            <tr>
+                                <th style="width:25%">Header (Nombre)</th>
+                                <th style="width:25%">Valor Ejemplo</th>
+                                <th style="width:10%;text-align:center">Req.</th>
+                                <th>Descripción</th>
+                            </tr>
+                            ${api.headers.map(h => `<tr>
+                                <td style="font-family:Courier New;font-size:12px;font-weight:bold;color:#6b21a8">${escapeHtmlForWord(h.name)}</td>
+                                <td style="font-family:Courier New;font-size:12px">${escapeHtmlForWord(h.example) || '—'}</td>
+                                <td style="text-align:center">${h.required ? '&#10003;' : '—'}</td>
+                                <td>${escapeHtmlForWord(h.description) || '—'}</td>
+                            </tr>`).join('')}
+                        </table>
+                    `;
+                }
+
+                if (api.fields && api.fields.length > 0) {
+                    apiSections += `
+                        <h3>${secNum++}. SCHEMA — CAMPOS DEL REQUEST</h3>
+                        <table>
+                            <tr>
+                                <th style="width:18%">Campo</th>
+                                <th style="width:22%">Tipo de dato</th>
+                                <th style="width:10%;text-align:center">Req.</th>
+                                <th style="width:18%">Long. / Formato</th>
+                                <th>Descripción</th>
+                            </tr>
+                            ${api.fields.map(f => `<tr>
+                                <td style="font-family:Courier New;font-size:12px;font-weight:bold">${escapeHtmlForWord(f.name)}</td>
+                                <td>${escapeHtmlForWord(f.type)}</td>
+                                <td style="text-align:center">${f.required ? '&#10003;' : '—'}</td>
+                                <td style="font-family:Courier New;font-size:12px">${escapeHtmlForWord(f.length) || '—'}</td>
+                                <td>${escapeHtmlForWord(f.description) || '—'}</td>
+                            </tr>`).join('')}
+                        </table>
+                    `;
+                }
+
+                const errSec = secNum++;
+                apiSections += `
+                    <h3>${secNum++}. ENDPOINT</h3>
                     <div class="endpoint-box">
                         <strong>Método HTTP:</strong> ${api.method}<br><br>
                         <strong>Ruta (Path):</strong> ${api.path}
                     </div>
-                    <h3>${(api.fields && api.fields.length > 0) ? '4' : '3'}. ESPECIFICACIÓN DE LA PETICIÓN (REQUEST)</h3>
+                    <h3>${secNum++}. ESPECIFICACIÓN DE LA PETICIÓN (REQUEST)</h3>
                     ${api.reqBody ? `<pre>${escapeHtmlForWord(api.reqBody)}</pre>` : '<p><i>Esta interfaz no requiere envío de payload en el cuerpo de la petición.</i></p>'}
-                    <h3>${(api.fields && api.fields.length > 0) ? '5' : '4'}. ESPECIFICACIÓN DE LA RESPUESTA (RESPONSE)</h3>
+                    <h3>${secNum++}. ESPECIFICACIÓN DE LA RESPUESTA (RESPONSE)</h3>
                     ${api.resBody ? `<pre>${escapeHtmlForWord(api.resBody)}</pre>` : '<p><i>Sin ejemplo de payload de respuesta definido.</i></p>'}
-                    <h3>${(api.fields && api.fields.length > 0) ? '6' : '5'}. MANEJO DE ERRORES (EXCEPCIONES)</h3>
+                    <h3>${errSec}. MANEJO DE ERRORES (EXCEPCIONES)</h3>
                     <p>El sistema API puede devolver los siguientes códigos HTTP dependiendo del error.</p>
-                    <h4>${(api.fields && api.fields.length > 0) ? '6.1' : '5.1'}. Tabla de Códigos HTTP y Significado</h4>
+                    <h4>${errSec}.1. Tabla de Códigos HTTP y Significado</h4>
                     <table>
                         <tr><th>Código HTTP</th><th>Descripción General</th><th>Acción a tomar por el consumidor</th></tr>
                         <tr><td><strong>400</strong></td><td>Bad Request</td><td>Revisar el formato del JSON y los campos obligatorios.</td></tr>
@@ -1224,8 +1434,18 @@
                         <tr><td><strong>403</strong></td><td>Forbidden</td><td>El usuario no tiene roles asignados en SAP BTP.</td></tr>
                         <tr><td><strong>500</strong></td><td>Internal Server Error</td><td>Reintentar más tarde. Error de red o en SAP backend.</td></tr>
                     </table>
-                    <h4>${(api.fields && api.fields.length > 0) ? '6.2' : '5.2'}. Ejemplo de Respuesta de Error (HTTP 400/500)</h4>
+                    <h4>${errSec}.2. Ejemplo de Respuesta de Error (HTTP 400/500)</h4>
                     ${api.errBody ? `<pre>${escapeHtmlForWord(api.errBody)}</pre>` : '<p><i>Sin ejemplo de payload de error definido.</i></p>'}
+                `;
+
+                bodyContent += `
+                    ${pageBreak}
+                    <h2>ESPECIFICACIÓN DE INTERFAZ: ${escapeHtmlForWord(api.title)}</h2>
+                    <table>
+                        <tr><th>Nombre de la Interfaz</th><td>${escapeHtmlForWord(api.title)}</td></tr>
+                        <tr><th>Protocolo</th><td>REST / HTTP</td></tr>
+                    </table>
+                    ${apiSections}
                 `;
             });
 
@@ -1239,6 +1459,7 @@
                         h1 { color: #0055a4; border-bottom: 2px solid #0055a4; padding-bottom: 5px; font-size: 24px; }
                         h2 { color: #0055a4; font-size: 20px; border-bottom: 2px solid #0055a4; padding-bottom: 3px; margin-top: 20px; }
                         h3 { color: #0073e6; margin-top: 15px; font-size: 16px; }
+                        h4 { color: #0055a4; margin-top: 12px; font-size: 14px; }
                         table { border-collapse: collapse; width: 100%; margin-bottom: 15px; }
                         th, td { border: 1px solid #ccc; padding: 8px; text-align: left; font-size: 14px;}
                         th { background-color: #f2f2f2; font-weight: bold; width: 30%; }
