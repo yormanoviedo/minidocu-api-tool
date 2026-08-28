@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiniDocuAPITool by yormanoviedo v1.0.7</title>
+    <title>MiniDocuAPITool by yormanoviedo v1.0.9</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Estilos personalizados para emular Swagger */
@@ -61,7 +61,7 @@
                     </div>
                     <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
                         MiniDocuAPITool <span class="font-light text-sm hidden sm:inline">by yormanoviedo</span>
-                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-bold border border-blue-200 tracking-wide">v1.0.7</span>
+                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-bold border border-blue-200 tracking-wide">v1.0.9</span>
                     </h1>
                 </div>
                 
@@ -176,7 +176,7 @@
                                             <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2 w-44">Valor Ejemplo</th>
                                             <th class="text-center text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2 w-20">Requerido</th>
                                             <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2">Descripción</th>
-                                            <th class="pb-2 w-8"></th>
+                                            <th class="pb-2 w-16"></th>
                                         </tr>
                                     </thead>
                                     <tbody id="headers_body">
@@ -208,7 +208,7 @@
                                             <th class="text-center text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2 w-20">Requerido</th>
                                             <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2 w-32">Long. / Formato</th>
                                             <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2">Descripción</th>
-                                            <th class="pb-2 w-8"></th>
+                                            <th class="pb-2 w-16"></th>
                                         </tr>
                                     </thead>
                                     <tbody id="fields_body">
@@ -218,7 +218,39 @@
                             </div>
                             <button type="button" onclick="addFieldRow()" class="mt-2 text-xs text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 hover:underline">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                                Añadir campo
+                                Añadir campo de entrada
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- SCHEMA: Campos de la Respuesta (Success) -->
+                    <div class="border border-emerald-100 rounded-lg overflow-hidden">
+                        <div class="bg-emerald-50 px-3 py-2 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span class="text-xs font-semibold text-emerald-800 uppercase tracking-wide">Schema — Campos de la Respuesta (Success)</span>
+                            <span class="text-xs text-emerald-500 ml-1">(opcional)</span>
+                        </div>
+                        <div class="p-3 bg-white">
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm" id="res_fields_table">
+                                    <thead>
+                                        <tr class="border-b border-gray-200">
+                                            <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2 w-36">Campo</th>
+                                            <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2 w-44">Tipo de dato</th>
+                                            <th class="text-center text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2 w-20">Obligatorio</th>
+                                            <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2 w-32">Long. / Formato</th>
+                                            <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide pb-2 pr-2">Descripción</th>
+                                            <th class="pb-2 w-16"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="res_fields_body">
+                                        <!-- Filas dinámicas -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button type="button" onclick="addResFieldRow()" class="mt-2 text-xs text-emerald-600 hover:text-emerald-800 font-medium flex items-center gap-1 hover:underline">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                Añadir campo de salida
                             </button>
                         </div>
                     </div>
@@ -399,6 +431,12 @@
                         { name: "Accept-Language", example: "es-ES", required: true, description: "Idioma en que se deben retornar los mensajes explicativos" },
                         { name: "Content-Type", example: "application/json", required: true, description: "Formato del cuerpo de la petición" }
                     ],
+                    fields: [],
+                    resFields: [
+                        { name: "vuelos", type: "Array", required: true, length: "N", description: "Lista de vuelos coincidentes con la consulta" },
+                        { name: "carrid", type: "Alfanumérico", required: true, length: "3 chars", description: "Código de la aerolínea (ej: LH, AA)" },
+                        { name: "price", type: "Numérico (Decimal)", required: true, length: "15,2", description: "Precio base del pasaje" }
+                    ],
                     reqBody: "",
                     resBody: "{\n  \"vuelos\": [\n    {\n      \"mandt\": \"100\",\n      \"carrid\": \"LH\",\n      \"connid\": \"0400\",\n      \"fldate\": \"2026-07-10\",\n      \"price\": \"750.00\",\n      \"currency\": \"EUR\",\n      \"planetype\": \"A380-800\",\n      \"seatsmax\": 475,\n      \"seatsocc\": 320,\n      \"paymentsum\": \"240000.00\"\n    },\n    {\n      \"mandt\": \"100\",\n      \"carrid\": \"AA\",\n      \"connid\": \"0017\",\n      \"fldate\": \"2026-07-12\",\n      \"price\": \"430.00\",\n      \"currency\": \"USD\",\n      \"planetype\": \"747-400\",\n      \"seatsmax\": 385,\n      \"seatsocc\": 210,\n      \"paymentsum\": \"90300.00\"\n    }\n  ]\n}"
                 },
@@ -414,6 +452,15 @@
                         { name: "Content-Type", example: "application/json", required: true, description: "Formato JSON" },
                         { name: "X-Correlation-ID", example: "uuid-9876-5432", required: false, description: "ID para trazabilidad en logs BTP" }
                     ],
+                    fields: [
+                        { name: "carrid", type: "Alfanumérico", required: true, length: "3 chars", description: "Código de aerolínea" },
+                        { name: "connid", type: "Alfanumérico", required: true, length: "4 chars", description: "Número de vuelo" },
+                        { name: "fldate", type: "Fecha (YYYYMMDD)", required: true, length: "YYYY-MM-DD", description: "Fecha del vuelo" }
+                    ],
+                    resFields: [
+                        { name: "status", type: "Alfanumérico", required: true, length: "10 chars", description: "Estado general del proceso (SUCCESS/ERROR)" },
+                        { name: "reserva_id", type: "Alfanumérico", required: true, length: "20 chars", description: "Identificador único de reserva asignado" }
+                    ],
                     reqBody: "{\n  \"carrid\": \"LH\",\n  \"connid\": \"0400\",\n  \"fldate\": \"2026-07-10\",\n  \"pasajero\": {\n    \"nombre\": \"Juan\",\n    \"apellido\": \"García\",\n    \"email\": \"juan.garcia@empresa.com\"\n  },\n  \"clase\": \"Y\"\n}",
                     resBody: "{\n  \"status\": \"SUCCESS\",\n  \"reserva_id\": \"RSV-20260710-00042\",\n  \"carrid\": \"LH\",\n  \"connid\": \"0400\",\n  \"fldate\": \"2026-07-10\",\n  \"asiento\": \"24B\",\n  \"clase\": \"Y\",\n  \"precio\": \"750.00\",\n  \"moneda\": \"EUR\",\n  \"mensaje\": \"Reserva creada exitosamente\"\n}"
                 },
@@ -425,6 +472,8 @@
                     path: "/http/v1/vuelos/reserva/{reserva_id}",
                     description: "Cancela una reserva existente identificada por su ID. El iFlow actualiza el contador SEATSOCC de la tabla SFLIGHT en SAP, liberando el asiento, y registra la baja en la tabla SBOOK.",
                     headers: [],
+                    fields: [],
+                    resFields: [],
                     reqBody: "{\n  \"reserva_id\": \"RSV-20260710-00042\",\n  \"motivo\": \"Cambio de planes del pasajero\"\n}",
                     resBody: "{\n  \"status\": \"SUCCESS\",\n  \"reserva_id\": \"RSV-20260710-00042\",\n  \"mensaje\": \"Reserva cancelada. El asiento ha sido liberado correctamente.\",\n  \"reembolso\": {\n    \"importe\": \"750.00\",\n    \"moneda\": \"EUR\",\n    \"plazo_dias\": 5\n  }\n}"
                 }
@@ -466,6 +515,20 @@
             }).catch(err => {
                 console.error('Error al copiar: ', err);
             });
+        }
+
+        function moveRowUp(btn) {
+            const tr = btn.closest('tr');
+            if (tr && tr.previousElementSibling) {
+                tr.parentNode.insertBefore(tr, tr.previousElementSibling);
+            }
+        }
+
+        function moveRowDown(btn) {
+            const tr = btn.closest('tr');
+            if (tr && tr.nextElementSibling) {
+                tr.parentNode.insertBefore(tr.nextElementSibling, tr);
+            }
         }
 
         function renderApis() {
@@ -674,6 +737,38 @@
                                                 <tr class="${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} border-b border-gray-100">
                                                     <td class="px-4 py-2 font-mono font-semibold text-blue-700 text-xs">${escapeHtml(f.name)}</td>
                                                     <td class="px-4 py-2 text-xs"><span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full font-medium">${escapeHtml(f.type)}</span></td>
+                                                    <td class="px-4 py-2 text-center text-xs">${f.required ? '<span class="text-green-600 font-bold">&#10003;</span>' : '<span class="text-gray-400">—</span>'}</td>
+                                                    <td class="px-4 py-2 text-xs text-gray-600 font-mono">${escapeHtml(f.length || '—')}</td>
+                                                    <td class="px-4 py-2 text-xs text-gray-600">${escapeHtml(f.description || '—')}</td>
+                                                </tr>`).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>` : ''}
+
+                                ${(api.resFields && api.resFields.length > 0) ? `
+                                <div class="mb-6 border border-emerald-100 rounded-lg overflow-hidden">
+                                    <div class="bg-emerald-50 px-4 py-2 flex items-center gap-2 border-b border-emerald-100">
+                                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                        <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide">Schema — Campos de la Respuesta (Success)</span>
+                                        <span class="ml-auto text-xs text-emerald-500">${api.resFields.length} campo(s)</span>
+                                    </div>
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full text-sm">
+                                            <thead class="bg-gray-50 border-b border-gray-200">
+                                                <tr>
+                                                    <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Campo</th>
+                                                    <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Tipo</th>
+                                                    <th class="text-center text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Oblig.</th>
+                                                    <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Long. / Formato</th>
+                                                    <th class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-2">Descripción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${api.resFields.map((f, i) => `
+                                                <tr class="${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} border-b border-gray-100">
+                                                    <td class="px-4 py-2 font-mono font-semibold text-emerald-700 text-xs">${escapeHtml(f.name)}</td>
+                                                    <td class="px-4 py-2 text-xs"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-medium">${escapeHtml(f.type)}</span></td>
                                                     <td class="px-4 py-2 text-center text-xs">${f.required ? '<span class="text-green-600 font-bold">&#10003;</span>' : '<span class="text-gray-400">—</span>'}</td>
                                                     <td class="px-4 py-2 text-xs text-gray-600 font-mono">${escapeHtml(f.length || '—')}</td>
                                                     <td class="px-4 py-2 text-xs text-gray-600">${escapeHtml(f.description || '—')}</td>
@@ -979,9 +1074,15 @@
                     <input type="text" value="${escapeHtml(header.description || '')}" placeholder="Descripción del header"
                         class="header-desc w-full border border-gray-200 rounded px-2 py-1 text-xs focus:ring-purple-400 focus:border-purple-400">
                 </td>
-                <td class="py-1 text-center">
-                    <button type="button" onclick="removeHeaderRow(this)" class="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity" title="Eliminar header">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <td class="py-1 text-center whitespace-nowrap">
+                    <button type="button" onclick="moveRowUp(this)" class="text-gray-400 hover:text-purple-600 p-0.5 transition" title="Mover arriba">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+                    </button>
+                    <button type="button" onclick="moveRowDown(this)" class="text-gray-400 hover:text-purple-600 p-0.5 transition" title="Mover abajo">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <button type="button" onclick="removeHeaderRow(this)" class="text-red-400 hover:text-red-600 p-0.5 transition" title="Eliminar header">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </td>
             `;
@@ -989,7 +1090,6 @@
         }
 
         function addPresetHeader(name, example, required, description) {
-            // Verificar si ya existe para evitar duplicados exactos
             const existingRows = document.querySelectorAll('#headers_body tr');
             for (let tr of existingRows) {
                 const nameInput = tr.querySelector('.header-name');
@@ -1010,7 +1110,7 @@
             const headers = [];
             rows.forEach(tr => {
                 const name = tr.querySelector('.header-name').value.trim();
-                if (!name) return; // omitir filas vacías
+                if (!name) return;
                 headers.push({
                     name,
                     example: tr.querySelector('.header-example').value.trim(),
@@ -1058,9 +1158,15 @@
                     <input type="text" value="${escapeHtml(field.description || '')}" placeholder="Descripción"
                         class="field-desc w-full border border-gray-200 rounded px-2 py-1 text-xs focus:ring-blue-400 focus:border-blue-400">
                 </td>
-                <td class="py-1 text-center">
-                    <button type="button" onclick="removeFieldRow(this)" class="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity" title="Eliminar campo">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <td class="py-1 text-center whitespace-nowrap">
+                    <button type="button" onclick="moveRowUp(this)" class="text-gray-400 hover:text-blue-600 p-0.5 transition" title="Mover arriba">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+                    </button>
+                    <button type="button" onclick="moveRowDown(this)" class="text-gray-400 hover:text-blue-600 p-0.5 transition" title="Mover abajo">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <button type="button" onclick="removeFieldRow(this)" class="text-red-400 hover:text-red-600 p-0.5 transition" title="Eliminar campo">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </td>
             `;
@@ -1076,7 +1182,7 @@
             const fields = [];
             rows.forEach(tr => {
                 const name = tr.querySelector('.field-name').value.trim();
-                if (!name) return; // omitir filas vacías
+                if (!name) return;
                 fields.push({
                     name,
                     type: tr.querySelector('.field-type').value,
@@ -1088,10 +1194,78 @@
             return fields;
         }
 
+        // --- RESPONSE SCHEMA HELPERS ---
+        function addResFieldRow(field = {}) {
+            const tbody = document.getElementById('res_fields_body');
+            const idx = Date.now() + Math.random();
+            const typeOptions = FIELD_TYPES.map(t =>
+                `<option value="${t}" ${field.type === t ? 'selected' : ''}>${t}</option>`
+            ).join('');
+            const tr = document.createElement('tr');
+            tr.className = 'border-b border-gray-100 group';
+            tr.dataset.resFieldId = idx;
+            tr.innerHTML = `
+                <td class="py-1 pr-1">
+                    <input type="text" value="${escapeHtml(field.name || '')}" placeholder="ej: status"
+                        class="res-field-name w-full border border-gray-200 rounded px-2 py-1 text-xs font-mono text-emerald-700 font-semibold focus:ring-emerald-400 focus:border-emerald-400">
+                </td>
+                <td class="py-1 pr-1">
+                    <select class="res-field-type w-full border border-gray-200 rounded px-2 py-1 text-xs bg-white focus:ring-emerald-400 focus:border-emerald-400">
+                        ${typeOptions}
+                    </select>
+                </td>
+                <td class="py-1 pr-1 text-center">
+                    <input type="checkbox" class="res-field-required w-4 h-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-400" ${field.required !== false ? 'checked' : ''}>
+                </td>
+                <td class="py-1 pr-1">
+                    <input type="text" value="${escapeHtml(field.length || '')}" placeholder="ej: 20 chars"
+                        class="res-field-length w-full border border-gray-200 rounded px-2 py-1 text-xs font-mono focus:ring-emerald-400 focus:border-emerald-400">
+                </td>
+                <td class="py-1 pr-1">
+                    <input type="text" value="${escapeHtml(field.description || '')}" placeholder="Descripción del campo de respuesta"
+                        class="res-field-desc w-full border border-gray-200 rounded px-2 py-1 text-xs focus:ring-emerald-400 focus:border-emerald-400">
+                </td>
+                <td class="py-1 text-center whitespace-nowrap">
+                    <button type="button" onclick="moveRowUp(this)" class="text-gray-400 hover:text-emerald-600 p-0.5 transition" title="Mover arriba">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
+                    </button>
+                    <button type="button" onclick="moveRowDown(this)" class="text-gray-400 hover:text-emerald-600 p-0.5 transition" title="Mover abajo">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <button type="button" onclick="removeResFieldRow(this)" class="text-red-400 hover:text-red-600 p-0.5 transition" title="Eliminar campo">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function removeResFieldRow(btn) {
+            btn.closest('tr').remove();
+        }
+
+        function getResFieldsFromTable() {
+            const rows = document.querySelectorAll('#res_fields_body tr');
+            const resFields = [];
+            rows.forEach(tr => {
+                const name = tr.querySelector('.res-field-name').value.trim();
+                if (!name) return;
+                resFields.push({
+                    name,
+                    type: tr.querySelector('.res-field-type').value,
+                    required: tr.querySelector('.res-field-required').checked,
+                    length: tr.querySelector('.res-field-length').value.trim(),
+                    description: tr.querySelector('.res-field-desc').value.trim()
+                });
+            });
+            return resFields;
+        }
+
         function openModal() {
             document.getElementById('apiForm').reset();
             document.getElementById('headers_body').innerHTML = '';
             document.getElementById('fields_body').innerHTML = '';
+            document.getElementById('res_fields_body').innerHTML = '';
             document.getElementById('modalTitle').textContent = 'Agregar Nueva Interfaz CPI';
             editingApiId = null; 
             document.getElementById('modal').classList.remove('hidden');
@@ -1117,9 +1291,13 @@
             document.getElementById('headers_body').innerHTML = '';
             (apiToEdit.headers || []).forEach(h => addHeaderRow(h));
 
-            // Cargar campos del schema
+            // Cargar campos del schema request
             document.getElementById('fields_body').innerHTML = '';
             (apiToEdit.fields || []).forEach(f => addFieldRow(f));
+
+            // Cargar campos del schema response
+            document.getElementById('res_fields_body').innerHTML = '';
+            (apiToEdit.resFields || []).forEach(f => addResFieldRow(f));
 
             document.getElementById('modal').classList.remove('hidden');
             if (event) event.stopPropagation();
@@ -1141,6 +1319,7 @@
                 description: document.getElementById('f_desc').value,
                 headers: getHeadersFromTable(),
                 fields: getFieldsFromTable(),
+                resFields: getResFieldsFromTable(),
                 reqBody: document.getElementById('f_req').value,
                 resBody: document.getElementById('f_res').value,
                 errBody: document.getElementById('f_err').value
@@ -1176,7 +1355,6 @@
             if (event) event.stopPropagation();
         }
 
-        // --- SISTEMAS DE EXPORTACIÓN (Word) ---
         function exportToWord(id) {
             const api = apiData.find(a => a.id === id);
             if (!api) return;
@@ -1284,16 +1462,42 @@
                 `;
             }
 
+            if (api.resFields && api.resFields.length > 0) {
+                sectionsHtml += `
+                    <h2>${secNum++}. SCHEMA — CAMPOS DE LA RESPUESTA (SUCCESS)</h2>
+                    <table>
+                        <tr>
+                            <th style="width:18%">Campo</th>
+                            <th style="width:22%">Tipo de dato</th>
+                            <th style="width:10%;text-align:center">Oblig.</th>
+                            <th style="width:18%">Long. / Formato</th>
+                            <th>Descripción</th>
+                        </tr>
+                        ${api.resFields.map(f => `<tr>
+                            <td style="font-family:Courier New;font-size:12px;font-weight:bold;color:#047857">${escapeHtmlForWord(f.name)}</td>
+                            <td>${escapeHtmlForWord(f.type)}</td>
+                            <td style="text-align:center">${f.required ? '&#10003;' : '—'}</td>
+                            <td style="font-family:Courier New;font-size:12px">${escapeHtmlForWord(f.length) || '—'}</td>
+                            <td>${escapeHtmlForWord(f.description) || '—'}</td>
+                        </tr>`).join('')}
+                    </table>
+                `;
+            }
+
+            const endpointSec = secNum++;
+            const reqSec = secNum++;
+            const resSec = secNum++;
             const errSec = secNum++;
+
             sectionsHtml += `
-                <h2>${secNum++}. ENDPOINT</h2>
+                <h2>${endpointSec}. ENDPOINT</h2>
                 <div class="endpoint-box">
                     <strong>Método HTTP:</strong> ${api.method}<br><br>
                     <strong>Ruta (Path):</strong> ${api.path}
                 </div>
-                <h2>${secNum++}. ESPECIFICACIÓN DE LA PETICIÓN (REQUEST)</h2>
+                <h2>${reqSec}. ESPECIFICACIÓN DE LA PETICIÓN (REQUEST)</h2>
                 ${api.reqBody ? `<pre>${escapeHtmlForWord(api.reqBody)}</pre>` : '<p><i>Esta interfaz no requiere envío de payload en el cuerpo de la petición.</i></p>'}
-                <h2>${secNum++}. ESPECIFICACIÓN DE LA RESPUESTA (RESPONSE)</h2>
+                <h2>${resSec}. ESPECIFICACIÓN DE LA RESPUESTA (RESPONSE)</h2>
                 ${api.resBody ? `<pre>${escapeHtmlForWord(api.resBody)}</pre>` : '<p><i>Sin ejemplo de payload de respuesta definido.</i></p>'}
                 <h2>${errSec}. MANEJO DE ERRORES (EXCEPCIONES)</h2>
                 <p>El sistema API puede devolver los siguientes códigos HTTP dependiendo del error.</p>
@@ -1413,16 +1617,42 @@
                     `;
                 }
 
+                if (api.resFields && api.resFields.length > 0) {
+                    apiSections += `
+                        <h3>${secNum++}. SCHEMA — CAMPOS DE LA RESPUESTA (SUCCESS)</h3>
+                        <table>
+                            <tr>
+                                <th style="width:18%">Campo</th>
+                                <th style="width:22%">Tipo de dato</th>
+                                <th style="width:10%;text-align:center">Oblig.</th>
+                                <th style="width:18%">Long. / Formato</th>
+                                <th>Descripción</th>
+                            </tr>
+                            ${api.resFields.map(f => `<tr>
+                                <td style="font-family:Courier New;font-size:12px;font-weight:bold;color:#047857">${escapeHtmlForWord(f.name)}</td>
+                                <td>${escapeHtmlForWord(f.type)}</td>
+                                <td style="text-align:center">${f.required ? '&#10003;' : '—'}</td>
+                                <td style="font-family:Courier New;font-size:12px">${escapeHtmlForWord(f.length) || '—'}</td>
+                                <td>${escapeHtmlForWord(f.description) || '—'}</td>
+                            </tr>`).join('')}
+                        </table>
+                    `;
+                }
+
+                const endpointSec = secNum++;
+                const reqSec = secNum++;
+                const resSec = secNum++;
                 const errSec = secNum++;
+
                 apiSections += `
-                    <h3>${secNum++}. ENDPOINT</h3>
+                    <h3>${endpointSec}. ENDPOINT</h3>
                     <div class="endpoint-box">
                         <strong>Método HTTP:</strong> ${api.method}<br><br>
                         <strong>Ruta (Path):</strong> ${api.path}
                     </div>
-                    <h3>${secNum++}. ESPECIFICACIÓN DE LA PETICIÓN (REQUEST)</h3>
+                    <h3>${reqSec}. ESPECIFICACIÓN DE LA PETICIÓN (REQUEST)</h3>
                     ${api.reqBody ? `<pre>${escapeHtmlForWord(api.reqBody)}</pre>` : '<p><i>Esta interfaz no requiere envío de payload en el cuerpo de la petición.</i></p>'}
-                    <h3>${secNum++}. ESPECIFICACIÓN DE LA RESPUESTA (RESPONSE)</h3>
+                    <h3>${resSec}. ESPECIFICACIÓN DE LA RESPUESTA (RESPONSE)</h3>
                     ${api.resBody ? `<pre>${escapeHtmlForWord(api.resBody)}</pre>` : '<p><i>Sin ejemplo de payload de respuesta definido.</i></p>'}
                     <h3>${errSec}. MANEJO DE ERRORES (EXCEPCIONES)</h3>
                     <p>El sistema API puede devolver los siguientes códigos HTTP dependiendo del error.</p>
